@@ -1,8 +1,8 @@
-# Mach 30 Python Workspace (Kasm Image)
+# GIS Workspace (Kasm Image)
 
 ## Introduction
 
-This repo provides a workspace for Mach 30 volunteers to work on Python projects based on the [Ansible based template for KASM Ubuntu Focal Images](https://github.com/j-simmons-phd/kasm-core-focal-template) template provided by @j-simmons-phd.  The workspace is configured with the following software:
+This repo provides a workspace for GIS users to work on GIS projects based on the [Ansible based template for KASM Ubuntu Focal Images](https://github.com/j-simmons-phd/kasm-core-focal-template) template provided by @j-simmons-phd.  The workspace is configured with the following software:
 
 - git cli
 - [Keychain](https://www.funtoo.org/Keychain)
