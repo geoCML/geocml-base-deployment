@@ -13,6 +13,7 @@ This repo provides a workspace for GIS users to work on GIS projects based on th
     - [Jupyter Notebook](https://jupyter.org/)
     - [Voilà](https://voila.readthedocs.io/en/stable/index.html)
     - [Pint](https://pint.readthedocs.io/en/stable/)
+- [QGIS](https://docs.qgis.org/3.22/en/docs/user_manual/)
 - VS Code with the following extensions (note, auto-updates are disabled)
     - [Python extension by Microsoft](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 
