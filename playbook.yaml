@@ -191,6 +191,7 @@
         - notebook
         - voila
         - pint
+        - markupsafe==2.0.1
 
   roles:
     - role: geerlingguy.pip
