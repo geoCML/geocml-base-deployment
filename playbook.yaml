@@ -187,7 +187,6 @@
   - name: Install python packages with pip
     pip:
       name:
-        - jupyterlab
         - notebook
         - voila
         - pint
