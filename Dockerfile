@@ -11,14 +11,16 @@ WORKDIR $HOME
 # copy over install_files/ for use in playbooks
 ADD install_files $HOME/install_files
 
+# TODO: we might not need to do this? test building the container without it and see
+RUN echo "127.0.0.1 localhost" > /etc/hosts 
+
 # install Ansible per 
 # https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu
 RUN apt update && apt -y install software-properties-common && add-apt-repository --yes --update ppa:ansible/ansible && apt install -y ansible && rm -rf /var/lib/apt/lists/*
 
 # run Ansible commands
 COPY ./requirements.yaml ./playbook.yaml ./
-RUN ansible-galaxy install -r requirements.yaml && ansible-playbook -i,localhost playbook.yaml --tags "all" && rm -f ./*.yaml
-
+RUN ansible-galaxy install -r requirements.yaml && ansible-playbook -i,localhost playbook.yaml --tags "all" && rm -f ./*.yaml 
 # Custom Desktop Background - replace bg_custom.png on disk with your own background image
 COPY ./bg_custom.png /usr/share/extra/backgrounds/bg_default.png
 
@@ -29,6 +31,9 @@ COPY ./terminalrc /home/kasm-default-profile/.config/xfce4/terminal/terminalrc
 # clean up install_files/
 RUN rm -rf $HOME/install_files/
 
+# TODO: we might not need to do this either, Ansible should start the server on its own
+RUN service postgresql restart 
+
 ######### End Customizations ###########
 
 RUN chown 1000:0 $HOME
@@ -37,5 +42,4 @@ RUN $STARTUPDIR/set_user_permission.sh $HOME
 ENV HOME /home/kasm-user
 WORKDIR $HOME
 RUN mkdir -p $HOME && chown -R 1000:0 $HOME
-
 USER 1000
