@@ -51,11 +51,27 @@
 # Be sure to use the same hosts and connection entries above
 # addtional plays
 
+- 
+  # Install sudo for the vs-code role and PostgreSQL
+  hosts: localhost
+  connection: local
+  tasks:
+  - name: Install Sudo
+    apt:
+      name: sudo
+      update_cache: yes
+  - name: Preserve DONT_PROMPT_WSL_INSTALL in sudoers
+    lineinfile:
+      path: "/etc/sudoers"
+      line: "Defaults        env_keep += \"DONT_PROMPT_WSL_INSTALL\""
+    when: wsl2_environment
+
 -
   # Install QGIS
   hosts: localhost
   connection: local
   gather_facts: yes
+  become: yes
   tasks:
   - name: Install gnupg with Apt
     apt:
@@ -80,26 +96,12 @@
       name: qgis-plugin-grass
       update_cache: yes
 
-- 
-  # Install sudo for the vs-code role and PostgreSQL
-  hosts: localhost
-  connection: local
-  tasks:
-  - name: Install Sudo
-    apt:
-      name: sudo
-      update_cache: yes
-  - name: Preserve DONT_PROMPT_WSL_INSTALL in sudoers
-    lineinfile:
-      path: "/etc/sudoers"
-      line: "Defaults        env_keep += \"DONT_PROMPT_WSL_INSTALL\""
-    when: wsl2_environment
-
 -
   # Install / Configure PostgreSQL + PostGIS
   hosts: localhost
   connection: local
   gather_facts: yes
+  become: yes
   tasks:
   - name: Install postgresql # TODO: do we actually need to install this? It seems like a conflicting version of postgres is installed somewhere else
     apt:
@@ -123,26 +125,22 @@
         name: postgresql
         state: restarted
   - name: Create new Postgres user 
-    become: yes 
     become_user: postgres
     community.postgresql.postgresql_user:
         name: geocml 
         password: geocml 
         role_attr_flags: "CREATEDB,NOSUPERUSER"
   - name: Create new Postgres database
-    become: yes 
     become_user: postgres
     community.postgresql.postgresql_db:
         name: geocml_db
         conn_limit: 100 # TODO: Do we need to limit this? Might be good to give people the option
   - name: Set geocml as owner of geocml_db
-    become: yes 
     become_user: postgres
     community.postgresql.postgresql_owner:
         db: geocml_db
         new_owner: geocml
   - name: Allow geocml access to geocml_db from ipv6 localhost ::1
-    become: yes
     become_user: postgres
     community.postgresql.postgresql_pg_hba:
         dest: /etc/postgresql/12/main/pg_hba.conf
@@ -152,7 +150,6 @@
         databases: geocml_cb 
         create: yes
   - name: Allow geocml access to geocml_db from ipv4 localhost 127.0.0.1
-    become: yes
     become_user: postgres
     community.postgresql.postgresql_pg_hba:
         dest: /etc/postgresql/12/main/pg_hba.conf
@@ -163,7 +160,6 @@
         method: peer
         create: yes
   - name: Add PostGIS extension to geocml_db
-    become: yes
     become_user: postgres
     community.postgresql.postgresql_ext:
         db: geocml_db
@@ -184,7 +180,7 @@
   connection: local
   gather_facts: yes
   tags: install_git_keychain
-
+  become: yes
   vars:
     git_version: "2.36.1"
     git_version_to_install: "1:{{ git_version }}-0ppa1~ubuntu20.04.1"
@@ -267,6 +263,7 @@
   hosts: localhost
   connection: local
   gather_facts: yes
+  become: yes
 
   tasks:
   - name: Update OS to point python to python3
