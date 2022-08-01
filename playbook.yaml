@@ -162,13 +162,18 @@
         users: geocml 
         source: 127.0.0.1
         databases: geocml_cb 
-        method: peer
+        method: md5 
         create: yes
   - name: Add PostGIS extension to geocml_db
     become_user: postgres
     community.postgresql.postgresql_ext:
         db: geocml_db
         name: postgis
+  - name: Restart PostgreSQL service
+    service:
+        enabled: yes
+        name: postgresql
+        state: restarted # TODO: add a test here to make sure that there are no exceptions from Postgres after configuration
 
 -
   # install chrome

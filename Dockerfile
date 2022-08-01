@@ -31,9 +31,6 @@ COPY ./terminalrc /home/kasm-default-profile/.config/xfce4/terminal/terminalrc
 # clean up install_files/
 RUN rm -rf $HOME/install_files/
 
-# TODO: we might not need to do this either, Ansible should start the server on its own
-RUN service postgresql restart 
-
 ######### End Customizations ###########
 
 RUN chown 1000:0 $HOME
