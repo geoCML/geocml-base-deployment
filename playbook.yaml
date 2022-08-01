@@ -140,6 +140,14 @@
     community.postgresql.postgresql_db:
         name: geocml_db
         conn_limit: 100 # TODO: Do we need to limit this? Might be good to give people the option
+  - name: Give geocml full privs to geocml_db 
+    become_user: postgres
+    community.postgresql.postgresql_privs:
+        type: database
+        database: geocml_db
+        roles: geocml
+        grant_option: no
+        privs: all
   - name: Set geocml as owner of geocml_db
     become_user: postgres
     community.postgresql.postgresql_owner:
@@ -153,6 +161,7 @@
         users: geocml 
         source: ::1
         databases: geocml_cb 
+        method: md5
         create: yes
   - name: Allow geocml access to geocml_db from ipv4 localhost 127.0.0.1
     become_user: postgres
