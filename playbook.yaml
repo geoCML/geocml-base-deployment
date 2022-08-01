@@ -123,7 +123,12 @@
     service:
         enabled: yes
         name: postgresql
-        state: restarted
+        state: started 
+  - name: Set default postgres user's password 
+    become_user: postgres
+    community.postgresql.postgresql_user:
+        name: postgres
+        password: admin
   - name: Create new Postgres user 
     become_user: postgres
     community.postgresql.postgresql_user:
