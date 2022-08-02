@@ -31,7 +31,7 @@ COPY ./terminalrc /home/kasm-default-profile/.config/xfce4/terminal/terminalrc
 # clean up install_files/
 RUN rm -rf $HOME/install_files/
 
-RUN echo 'USER        ALL = NOPASSWD: /usr/sbin/service' > /etc/sudoers
+RUN sudo echo 'USER        ALL = NOPASSWD: /usr/sbin/service' > /etc/sudoers
 
 ######### End Customizations ###########
 
