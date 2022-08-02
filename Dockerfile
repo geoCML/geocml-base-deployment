@@ -12,7 +12,7 @@ WORKDIR $HOME
 ADD install_files $HOME/install_files
 
 # TODO: we might not need to do this? test building the container without it and see
-RUN echo "127.0.0.1 localhost" > /etc/hosts 
+#RUN echo "127.0.0.1 localhost" > /etc/hosts
 
 # install Ansible per 
 # https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu
