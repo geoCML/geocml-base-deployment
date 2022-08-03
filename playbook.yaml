@@ -123,7 +123,15 @@
     service:
         enabled: yes
         name: postgresql
-        state: started 
+        state: started
+  - name: Allow postgres to sign in with peer authentication
+    become_user: postgres
+    community.postgresql.postgresql_pg_hba:
+        dest: /etc/postgresql/12/main/pg_hba.conf
+        address: local 
+        users: postgres 
+        method: peer
+        create: yes
   - name: Create new Postgres user 
     become_user: postgres
     community.postgresql.postgresql_user:
