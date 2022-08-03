@@ -31,7 +31,7 @@ COPY ./terminalrc /home/kasm-default-profile/.config/xfce4/terminal/terminalrc
 # clean up install_files/
 RUN rm -rf $HOME/install_files/
 
-RUN echo 'kasm_user        ALL = NOPASSWD: /bin/su - postgres' | sudo EDITOR='tee -a' visudo
+RUN echo 'default        ALL = NOPASSWD: /bin/su - postgres' | sudo EDITOR='tee -a' visudo
 
 ######### End Customizations ###########
 
