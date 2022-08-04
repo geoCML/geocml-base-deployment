@@ -187,6 +187,18 @@
         name: postgresql
         state: restarted # TODO: add a test here to make sure that there are no exceptions from Postgres after configuration
 
+- 
+  # Create default user 
+  hosts: localhost
+  connection: local
+  tasks:
+  - name: Create default user
+    ansible.builtin.user:
+        name: default
+        password: $6$y5bV.F7ASOab$Mj7q.8PSdc5edv72obVZ0vuEzUuvTvV06uJTZ0SidIxJQ9uSKNRSQWt/UwHy9vmoAM1EdtRwvCegKEsPkWuVd1 # pw: default
+        home: /home/kasm_user
+        group: postgres
+
 -
   # install chrome
   hosts: localhost
