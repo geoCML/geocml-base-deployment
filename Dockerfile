@@ -31,14 +31,15 @@ COPY ./terminalrc /home/kasm-default-profile/.config/xfce4/terminal/terminalrc
 # clean up install_files/
 RUN rm -rf $HOME/install_files/
 
-RUN echo 'default        ALL = NOPASSWD: /bin/su - postgres' | sudo EDITOR='tee -a' visudo
+RUN printf 'auth [success=ignore default=1] pam_succeed_if.so user = postgres\nauth sufficient pam_succeed_if.so use_uid user ingroup postgres\n' >> /etc/pam.d/su
 
 ######### End Customizations ###########
 
 RUN chown 1000:0 $HOME
 RUN $STARTUPDIR/set_user_permission.sh $HOME
 
-ENV HOME /home/kasm-user
+ENV HOME /home/kasm-user 
 WORKDIR $HOME
-RUN mkdir -p $HOME && chown -R 1000:0 $HOME
-USER 1000
+RUN mkdir -p $HOME && chown -R default $HOME 
+# TODO: might not have to do the above, because Ansible should set it up for us
+USER default 
