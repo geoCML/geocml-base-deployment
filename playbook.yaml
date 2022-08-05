@@ -103,7 +103,7 @@
   gather_facts: yes
   become: yes
   tasks:
-  - name: Install postgresql # TODO: do we actually need to install this? It seems like a conflicting version of postgres is installed somewhere else
+  - name: Install postgresql 
     apt:
         name: postgresql
         update_cache: yes

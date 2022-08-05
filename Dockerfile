@@ -11,9 +11,6 @@ WORKDIR $HOME
 # copy over install_files/ for use in playbooks
 ADD install_files $HOME/install_files
 
-# TODO: we might not need to do this? test building the container without it and see
-#RUN echo "127.0.0.1 localhost" > /etc/hosts
-
 # install Ansible per 
 # https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu
 RUN apt update && apt -y install software-properties-common && add-apt-repository --yes --update ppa:ansible/ansible && apt install -y ansible && rm -rf /var/lib/apt/lists/*
