@@ -28,7 +28,7 @@ COPY ./bg_custom.png /usr/share/extra/backgrounds/bg_default.png
 RUN cp /etc/skel/.profile $HOME/.profile && mkdir $HOME/.config/xfce4/terminal/
 COPY ./terminalrc /home/kasm-default-profile/.config/xfce4/terminal/terminalrc
 
-RUN cp -f $HOME/install_files/su /etc/pam.d/su
+COPY devResources/su /etc/pam.d/su
 
 # clean up install_files/
 RUN rm -rf $HOME/install_files/
