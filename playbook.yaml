@@ -156,16 +156,6 @@
     community.postgresql.postgresql_owner:
         db: geocml_db
         new_owner: geocml
-  - name: Allow geocml access to geocml_db from ipv6 localhost ::1
-    become_user: postgres
-    community.postgresql.postgresql_pg_hba:
-        dest: /etc/postgresql/12/main/pg_hba.conf
-        contype: host
-        users: geocml 
-        source: ::1
-        databases: geocml_cb 
-        method: md5
-        create: yes
   - name: Allow geocml access to geocml_db from ipv4 localhost 127.0.0.1
     become_user: postgres
     community.postgresql.postgresql_pg_hba:
