@@ -51,11 +51,27 @@
 # Be sure to use the same hosts and connection entries above
 # addtional plays
 
+- 
+  # Install sudo for the vs-code role and PostgreSQL
+  hosts: localhost
+  connection: local
+  tasks:
+  - name: Install Sudo
+    apt:
+      name: sudo
+      update_cache: yes
+  - name: Preserve DONT_PROMPT_WSL_INSTALL in sudoers
+    lineinfile:
+      path: "/etc/sudoers"
+      line: "Defaults        env_keep += \"DONT_PROMPT_WSL_INSTALL\""
+    when: wsl2_environment
+
 -
   # Install QGIS
   hosts: localhost
   connection: local
   gather_facts: yes
+  become: yes
   tasks:
   - name: Install gnupg with Apt
     apt:
@@ -81,6 +97,99 @@
       update_cache: yes
 
 -
+  # Install / Configure PostgreSQL + PostGIS
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  become: yes
+  tasks:
+  - name: Install postgresql 
+    apt:
+        name: postgresql
+        update_cache: yes
+  - name: Install postgis 
+    apt:
+        name: postgis
+        update_cache: yes
+  - name: Add public key for pgadmin4
+    shell: curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo apt-key add
+  - name: Add pgadmin4 Apt repo
+    shell: sh -c 'echo "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+  - name: Install pgadmin4-desktop
+    apt:
+        name: pgadmin4-desktop
+        update_cache: yes
+  - name: Start PostgreSQL service
+    service:
+        enabled: yes
+        name: postgresql
+        state: started
+  - name: Allow postgres to sign in with peer authentication
+    become_user: postgres
+    community.postgresql.postgresql_pg_hba:
+        dest: /etc/postgresql/12/main/pg_hba.conf
+        address: local 
+        users: postgres 
+        method: peer
+        create: yes
+  - name: Create new Postgres user 
+    become_user: postgres
+    community.postgresql.postgresql_user:
+        name: geocml 
+        password: geocml 
+        role_attr_flags: "CREATEDB,NOSUPERUSER"
+  - name: Create new Postgres database
+    become_user: postgres
+    community.postgresql.postgresql_db:
+        name: geocml_db
+        conn_limit: 100 # TODO: Do we need to limit this? Might be good to give people the option
+  - name: Give geocml full privs to geocml_db 
+    become_user: postgres
+    community.postgresql.postgresql_privs:
+        type: database
+        database: geocml_db
+        roles: geocml
+        grant_option: no
+        privs: all
+  - name: Set geocml as owner of geocml_db
+    become_user: postgres
+    community.postgresql.postgresql_owner:
+        db: geocml_db
+        new_owner: geocml
+  - name: Allow geocml access to geocml_db from ipv4 localhost 127.0.0.1
+    become_user: postgres
+    community.postgresql.postgresql_pg_hba:
+        dest: /etc/postgresql/12/main/pg_hba.conf
+        contype: host
+        users: geocml 
+        source: 127.0.0.1
+        databases: geocml_cb 
+        method: md5 
+        create: yes
+  - name: Add PostGIS extension to geocml_db
+    become_user: postgres
+    community.postgresql.postgresql_ext:
+        db: geocml_db
+        name: postgis
+  - name: Restart PostgreSQL service
+    service:
+        enabled: yes
+        name: postgresql
+        state: restarted # TODO: add a test here to make sure that there are no exceptions from Postgres after configuration
+
+- 
+  # Create default user 
+  hosts: localhost
+  connection: local
+  tasks:
+  - name: Create default user
+    ansible.builtin.user:
+        name: default
+        password: $6$y5bV.F7ASOab$Mj7q.8PSdc5edv72obVZ0vuEzUuvTvV06uJTZ0SidIxJQ9uSKNRSQWt/UwHy9vmoAM1EdtRwvCegKEsPkWuVd1 # pw: default
+        home: /home/kasm-user
+        group: postgres
+
+-
   # install chrome
   hosts: localhost
   connection: local
@@ -95,7 +204,7 @@
   connection: local
   gather_facts: yes
   tags: install_git_keychain
-
+  become: yes
   vars:
     git_version: "2.36.1"
     git_version_to_install: "1:{{ git_version }}-0ppa1~ubuntu20.04.1"
@@ -178,6 +287,7 @@
   hosts: localhost
   connection: local
   gather_facts: yes
+  become: yes
 
   tasks:
   - name: Update OS to point python to python3
@@ -194,21 +304,6 @@
 
   roles:
     - role: geerlingguy.pip
-
-- 
-  # install sudo for the vs-code role below 
-  hosts: localhost
-  connection: local
-  tasks:
-  - name: Install Sudo
-    apt:
-      name: sudo
-      update_cache: yes
-  - name: Preserve DONT_PROMPT_WSL_INSTALL in sudoers
-    lineinfile:
-      path: "/etc/sudoers"
-      line: "Defaults        env_keep += \"DONT_PROMPT_WSL_INSTALL\""
-    when: wsl2_environment
 
 -
 # add dev user to give vs code somewhere to install extensions

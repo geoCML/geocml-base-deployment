@@ -18,13 +18,14 @@ RUN apt update && apt -y install software-properties-common && add-apt-repositor
 # run Ansible commands
 COPY ./requirements.yaml ./playbook.yaml ./
 RUN ansible-galaxy install -r requirements.yaml && ansible-playbook -i,localhost playbook.yaml --tags "all" && rm -f ./*.yaml
-
 # Custom Desktop Background - replace bg_custom.png on disk with your own background image
 COPY ./bg_custom.png /usr/share/extra/backgrounds/bg_default.png
 
 # Create .profile and set XFCE terminal to use it
 RUN cp /etc/skel/.profile $HOME/.profile && mkdir $HOME/.config/xfce4/terminal/
 COPY ./terminalrc /home/kasm-default-profile/.config/xfce4/terminal/terminalrc
+
+COPY devResources/su /etc/pam.d/su
 
 # clean up install_files/
 RUN rm -rf $HOME/install_files/
@@ -36,6 +37,6 @@ RUN $STARTUPDIR/set_user_permission.sh $HOME
 
 ENV HOME /home/kasm-user
 WORKDIR $HOME
-RUN mkdir -p $HOME && chown -R 1000:0 $HOME
-
-USER 1000
+RUN mkdir -p $HOME && chown -R default $HOME
+# TODO: might not have to do the above, because Ansible should set it up for us
+USER default
