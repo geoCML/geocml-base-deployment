@@ -1,5 +1,7 @@
 # GIS Workspace (Kasm Image)
 
+[![Join the chat at https://gitter.im/geoCML/geoCML-development](https://badges.gitter.im/geoCML/geoCML-development.svg)](https://gitter.im/geoCML/geoCML-development?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Introduction
 
 This repo provides a workspace for GIS users to work on GIS projects based on the [Ansible based template for KASM Ubuntu Focal Images](https://github.com/j-simmons-phd/kasm-core-focal-template) template provided by @j-simmons-phd.  The workspace is configured with the following software:
