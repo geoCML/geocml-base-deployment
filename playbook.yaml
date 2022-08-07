@@ -52,7 +52,7 @@
 # addtional plays
 
 - 
-  # Install sudo for the vs-code role and PostgreSQL
+  # Install sudo 
   hosts: localhost
   connection: local
   tasks:
@@ -198,97 +198,12 @@
   roles:
     - role: webarchitect609.google_chrome
 
--
-  # install keychain and git
-  hosts: localhost
-  connection: local
-  gather_facts: yes
-  tags: install_git_keychain
-  become: yes
-  vars:
-    git_version: "2.36.1"
-    git_version_to_install: "1:{{ git_version }}-0ppa1~ubuntu20.04.1"
-    keychain_version: "2.8.5"
-    keychain_version_to_install: "{{ keychain_version }}-1"
-    keychain_version_expected: "{{ keychain_version }}.."
-
-  tasks:
-  - name: Install dh-autoreconf
-    apt:
-      name: dh-autoreconf
-      update_cache: yes
-  - name: Install libcurl4-gnutls-dev
-    apt:
-      name: libcurl4-gnutls-dev
-      update_cache: yes
-  - name: Install libexpat1-dev
-    apt:
-      name: libexpat1-dev
-      update_cache: yes
-  - name: Install gettext
-    apt:
-      name: gettext
-      update_cache: yes
-  - name: Install libz-dev
-    apt:
-      name: libz-dev
-      update_cache: yes
-  - name: Install libssl-dev
-    apt:
-      name: libssl-dev
-      update_cache: yes
-  - name: Install install-info
-    apt:
-      name: install-info
-      update_cache: yes
-  - name: Download git (v2.36.1) tarball
-    shell: wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.36.1.tar.gz -O /home/kasm-default-profile/git-2.36.1.tar.gz
-  - name: Extract git source files
-    unarchive:
-      src: /home/kasm-default-profile/git-2.36.1.tar.gz
-      dest: /home/kasm-default-profile/
-      remote_src: yes
-      creates: /home/kasm-default-profile/git-2.36.1/README.md
-  - name: Delete git tarball
-    shell: rm /home/kasm-default-profile/git-2.36.1.tar.gz
-  - name: Build git
-    shell:
-      cmd: make configure && ./configure --prefix=/usr && make > /tmp/git_build_output.txt 2>&1 && make install
-      chdir: /home/kasm-default-profile/git-2.36.1
-      executable: /bin/bash
-  - name: Delete git source files
-    shell: rm -rf /home/kasm-default-profile/git-2.36.1
-  - name: Install Keychain
-    apt:
-      name: "keychain={{ keychain_version_to_install }}"
-      update_cache: yes
-  - name: Get git version
-    shell: git version | sed 's/[[:alpha:]|(|[:space:]]//g'
-    register: installed_git_version
-  - name: Get keychain version
-    shell: 
-      cmd: keychain -V 2> >(grep -i keychain) 2> >(sed 's/[[:alpha:]|(|[:space:]]//g') | fgrep '*' | sed 's/[*~://]//g'
-      executable: /bin/bash
-    register: installed_keychain_version
-  - name: Display git and keychain versions
-    debug:
-      msg: "git = {{ installed_git_version.stdout }} | keychain = {{ installed_keychain_version.stdout }}"
-  - name: Test git version
-    fail:
-      msg: "Git Version Error: Expected {{ git_version }} | Found {{ installed_git_version.stdout }}"
-    when: installed_git_version.stdout != git_version  
-  - name: Test keychain version
-    fail:
-      msg: "Keychain Version Error: Expected {{ keychain_version_expected }} | Found {{ installed_keychain_version.stdout }}"
-    when: installed_keychain_version.stdout != keychain_version_expected    
-
--
+- 
   # install Python packages with pip
   hosts: localhost
   connection: local
   gather_facts: yes
   become: yes
-
   tasks:
   - name: Update OS to point python to python3
     apt:
@@ -297,64 +212,11 @@
   - name: Install python packages with pip
     pip:
       name:
-        - notebook
-        - voila
         - pint
         - markupsafe==2.0.1
 
   roles:
     - role: geerlingguy.pip
-
--
-# add dev user to give vs code somewhere to install extensions
-  hosts: localhost
-  connection: local
-  tasks:
-  - name: Add dev user
-    user:
-      name: dev
-      uid: 1001
-
--
-  # install the remainder of the tools
-  hosts: localhost
-  connection: local
-  environment: 
-    DONT_PROMPT_WSL_INSTALL: 1
-  roles:
-    - role: gantsign.visual-studio-code
-      users:
-        - username: "dev"
-          visual_studio_code_extensions:
-            - ms-python.python
-          visual_studio_code_settings_overwrite: yes
-          visual_studio_code_settings: {
-            "extensions.ignoreRecommendations": true,
-            "update.mode": "none",
-            "extensions.autoUpdate": false,
-            "extensions.autoCheckUpdates": false,
-            "terminal.integrated.profiles.linux": {
-              "bash (login)": {
-                "path": "bash",
-                "args": ["-l"]
-                }
-              },
-            "terminal.integrated.defaultProfile.linux": "bash (login)" 
-          }  
-
--
-  # Copy VS Code changes to kasm-default-profile and lean up (remove) dev user now that vs code is installed
-  hosts: localhost
-  connection: local
-  tasks:
-  - name: Copy VS Code changes to kasm-default-profile
-    shell: 
-      cmd: cp -r /home/dev/.config/Code/ /home/kasm-default-profile/.config/Code/ && cp -r /home/dev/.vscode/ /home/kasm-default-profile/.vscode/
-  - name: Remove dev user
-    user:
-      name: dev
-      state: absent
-      remove: yes 
 
 # Three dots indicate the end of a YAML document
 ...
