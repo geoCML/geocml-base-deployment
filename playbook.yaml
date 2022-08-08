@@ -189,15 +189,6 @@
         home: /home/kasm-user
         group: postgres
 
--
-  # install chrome
-  hosts: localhost
-  connection: local
-  gather_facts: yes
-
-  roles:
-    - role: webarchitect609.google_chrome
-
 - 
   # install Python packages with pip
   hosts: localhost
