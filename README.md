@@ -1,6 +1,6 @@
 # GIS Workspace (Kasm Image)
 
-[![Join the chat at https://gitter.im/geoCML/geoCML-development](https://badges.gitter.im/geoCML/geoCML-development.svg)](https://gitter.im/geoCML/geoCML-development?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/geoCML/](https://badges.gitter.im/geoCML.svg)](https://gitter.im/geoCML?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Introduction
 
