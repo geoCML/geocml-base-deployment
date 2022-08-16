@@ -5,7 +5,7 @@ def log(task=None, message):
     """
     f = open('/home/kasm-user/Logs/task_log', 'a')
     if task == None:
-        f.write('{}:{}\n'.format(message))
+        f.write('{}\n'.format(message))
     else:
         f.write('{}:{}\n'.format(task.__name__, message))
     f.close()
