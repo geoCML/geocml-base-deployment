@@ -4,7 +4,7 @@ from task_logger import log
 
 def back_up_geocml_db():
     try:
-        conn = psycopg2.connect(dbname='geocml_db', 
+        conn = psycopg2.connect(dbname='geocml_db',
                                 user='geocml',
                                 password='geocml',
                                 host='127.0.0.1',
@@ -17,8 +17,8 @@ def back_up_geocml_db():
     table_cursor.execute('SELECT * FROM information_schema.tables WHERE table_schema = \'public\';')
     cursor = conn.cursor()
     back_up_timestamp = datetime.now()
-    for table in table_cursor.fetchall(): 
-        f = open('/home/kasm-user/DBBackups/{}/{}.sql'.format(back_up_time_stamp, table[2]), 'w') 
+    for table in table_cursor.fetchall():
+        f = open('/home/kasm-user/DBBackups/{}/{}.sql'.format(back_up_time_stamp, table[2]), 'w')
         cursor.execute('SELECT * FROM {};'.format(table[2]))
         for row in cursor:
             f.write('INSERT INTO {} VALUES ("{}");'.format(table[2], row))
