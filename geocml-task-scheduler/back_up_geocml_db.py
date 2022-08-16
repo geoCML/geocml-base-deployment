@@ -16,8 +16,9 @@ def back_up_geocml_db():
     table_cursor = conn.cursor()
     table_cursor.execute('SELECT * FROM information_schema.tables WHERE table_schema = \'public\';')
     cursor = conn.cursor()
+    back_up_timestamp = datetime.now()
     for table in table_cursor.fetchall(): 
-        f = open('/home/kasm-user/DBBackups/{}-{}.sql'.format(datetime.now(), table[2]), 'w') # TODO: dump these backups in a better location
+        f = open('/home/kasm-user/DBBackups/{}/{}.sql'.format(back_up_time_stamp, table[2]), 'w') 
         cursor.execute('SELECT * FROM {};'.format(table[2]))
         for row in cursor:
             f.write('INSERT INTO {} VALUES ("{}");'.format(table[2], row))
