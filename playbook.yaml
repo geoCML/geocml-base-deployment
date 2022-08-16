@@ -31,9 +31,17 @@
       wsl2_environment: true
     when: ansible_kernel is search("microsoft-standard-WSL2")
 
+    # NOTE: Uncomment the two lines below if you want to test your Ansible installation 
+    # before proceeding with the rest of the playbook.
+    #
+    # This is typically only necessary if you are changing the default Ansible installation
+    # that comes with the geoCML base image.
+    #roles:
+    #   - role: irixjp.role_example_hello
+
 # Add additional plays here (remember the list entry -)
 # Be sure to use the same hosts and connection entries above
-# addtional plays
+# additional plays
 
 - 
   # Install sudo
