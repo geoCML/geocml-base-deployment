@@ -1,9 +1,11 @@
+task_log_path = '/home/kasm-user/Logs/task_log'
+
 def log(task=None, message):
     """
     task: function
     message: str
     """
-    f = open('/home/kasm-user/Logs/task_log', 'a')
+    f = open(task_log_path, 'a')
     if task == None:
         f.write('{}\n'.format(message))
     else:
