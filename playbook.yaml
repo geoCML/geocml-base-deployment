@@ -81,16 +81,16 @@
     apt:
       name: software-properties-common
       update_cache: yes
-  - name: Install QGIS Signing Key
-    shell: wget -qO - https://qgis.org/downloads/qgis-2021.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
-  - name: Grant read permissions for QGIS Signing Key
-    shell: chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
-  - name: Add latest stable QGIS repo
-    shell: add-apt-repository "deb https://qgis.org/ubuntu $(lsb_release -c -s) main"
-  - name: Install qgis with Apt
-    apt:
-      name: qgis
-      update_cache: yes
+      #  - name: Install QGIS Signing Key
+      #    shell: wget -qO - https://qgis.org/downloads/qgis-2021.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
+      #  - name: Grant read permissions for QGIS Signing Key
+      #    shell: chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
+      #  - name: Add latest stable QGIS repo
+      #    shell: add-apt-repository "deb https://qgis.org/ubuntu $(lsb_release -c -s) main"
+      #  - name: Install qgis with Apt
+      #    apt:
+      #      name: qgis
+      #      update_cache: yes
   - name: Install qgis-plugin-grass with Apt
     apt:
       name: qgis-plugin-grass

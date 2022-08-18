@@ -1,5 +1,5 @@
 import psycopg2
-from datetime import datetime
+import time
 from task_logger import log
 
 def back_up_geocml_db():
@@ -16,7 +16,7 @@ def back_up_geocml_db():
     table_cursor = conn.cursor()
     table_cursor.execute('SELECT * FROM information_schema.tables WHERE table_schema = \'public\';')
     cursor = conn.cursor()
-    back_up_timestamp = datetime.now()
+    back_up_timestamp = time.time()
     for table in table_cursor.fetchall():
         f = open('/home/kasm-user/DBBackups/{}/{}.sql'.format(back_up_time_stamp, table[2]), 'w')
         cursor.execute('SELECT * FROM {};'.format(table[2]))

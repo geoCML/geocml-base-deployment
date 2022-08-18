@@ -1,6 +1,7 @@
 task_log_path = '/home/kasm-user/Logs/task_log'
 
-def log(task=None, message):
+# TODO: Dump exceptions to log file
+def log(message, task=None):
     """
     task: function
     message: str
