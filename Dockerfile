@@ -10,15 +10,32 @@ WORKDIR $HOME
 
 # copy over install_files/ for use in playbooks
 ADD install_files $HOME/install_files
+RUN apt update && apt install -y sudo
+
+# fix for .gnupg/ permissions when building custom images
+RUN apt install -y qgis
+
+# Install PostgreSQL, PostGIS, and PG Admin
+RUN apt install -y postgresql && apt install -y postgis 
+RUN curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | apt-key add && sh -c 'echo "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+RUN apt install -y pgadmin4-desktop
+
+# Install Python packages with pip
+RUN apt install -y python3-pip && pip install pint && pip install markupsafe==2.0.1
 
 # install Ansible per 
 # https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu
-RUN apt update && apt -y install software-properties-common && add-apt-repository --yes --update ppa:ansible/ansible && apt install -y ansible && rm -rf /var/lib/apt/lists/*
+RUN add-apt-repository --yes --update ppa:ansible/ansible && apt install -y ansible && rm -rf /var/lib/apt/lists/*
 
 # run Ansible commands
 COPY ./requirements.yaml ./playbook.yaml ./
 RUN ansible-galaxy install -r requirements.yaml && ansible-playbook -i,localhost playbook.yaml --tags "all" && rm -f ./*.yaml
 # Custom Desktop Background - replace bg_custom.png on disk with your own background image
+
+# Uninstall Ansible stuff
+RUN rm -rf ~/.ansible
+RUN apt remove -y ansible
+
 COPY ./bg_custom.png /usr/share/extra/backgrounds/bg_default.png
 
 # Create .profile and set XFCE terminal to use it
@@ -37,6 +54,4 @@ RUN $STARTUPDIR/set_user_permission.sh $HOME
 
 ENV HOME /home/kasm-user
 WORKDIR $HOME
-RUN mkdir -p $HOME && chown -R default $HOME
-# TODO: might not have to do the above, because Ansible should set it up for us
 USER default

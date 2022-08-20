@@ -5,20 +5,13 @@
 This repo provides a workspace for GIS users to work on GIS projects based on the [Ansible based template for KASM Ubuntu Focal Images](https://github.com/j-simmons-phd/kasm-core-focal-template) template provided by @j-simmons-phd.  The workspace is configured with the following software:
 
 - git cli
-- [Keychain](https://www.funtoo.org/Keychain)
-- Chrome
 - Python 3.8.x (part of the image template) with the following packages (not part of the image template)
     - pip
-    - [JupyterLab](https://jupyter.org/)
-    - [Jupyter Notebook](https://jupyter.org/)
-    - [Voilà](https://voila.readthedocs.io/en/stable/index.html)
     - [Pint](https://pint.readthedocs.io/en/stable/)
     - [MarkupSafe (2.0.1)](https://markupsafe.palletsprojects.com/en/2.0.x/)
 - [PostgreSQL](https://www.postgresql.org/) 
     - [PostGIS extension](https://postgis.net/) 
 - [QGIS](https://docs.qgis.org/3.22/en/docs/user_manual/)
-- VS Code with the following extensions (note, auto-updates are disabled)
-    - [Python extension by Microsoft](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 
 ## How to Use this Repo
 
