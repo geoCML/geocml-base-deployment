@@ -8,8 +8,8 @@ db_backups_path = '/home/kasm-user/DBBackups/'
 def restore_geocml_db_from_backups():
     try:
         conn = psycopg2.connect(dbname='geocml_db',
-                                user='geocml',
-                                password='geocml',
+                                user='postgres',
+                                password='admin',
                                 host='127.0.0.1',
                                 port=5432)
     except psycopg2.OperationalError:
@@ -39,4 +39,7 @@ def restore_geocml_db_from_backups():
         if sql_backup_file.split('.')[-1] == 'sql':
             log("Found SQL file {}".format(sql_backup_file))
             cursor.execute(open("{}/{}".format(most_recent_backup, sql_backup_file), 'r').read())
+    conn.commit()
+    cursor.close()
+    conn.close()
     return 0
