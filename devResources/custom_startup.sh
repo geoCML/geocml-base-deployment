@@ -1,2 +1,4 @@
 #!/bin/bash
-python3 /bin/geocml-task-scheduler/schedule.py
+
+# Start gTS
+python3 /home/kasm-user/Utils/geocml-task-scheduler/schedule.py

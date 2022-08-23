@@ -44,8 +44,6 @@ COPY ./terminalrc /home/kasm-default-profile/.config/xfce4/terminal/terminalrc
 
 COPY devResources/su /etc/pam.d/su
 
-COPY geocml-task-scheduler /bin/geocml-task-scheduler 
-# TODO: move gTS to the persistence layer
 COPY devResources/custom_startup.sh $STARTUPDIR/custom_startup.sh
 RUN chmod +x $STARTUPDIR/custom_startup.sh
 
