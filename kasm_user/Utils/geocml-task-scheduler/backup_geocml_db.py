@@ -54,7 +54,6 @@ def backup_geocml_db():
             for row in cursor: 
                 formatted_row = [] 
                 for item in row:
-                    # TODO: Test with null data
                     if isinstance(item, str):
                         item = item.replace(r"\'", r"''") # converts Python escape sequences to Postgres escape sequences                   
                     formatted_row.append(item)
