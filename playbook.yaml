@@ -121,8 +121,7 @@
     service:
         enabled: yes
         name: postgresql
-        state: restarted # TODO: add a test here to make sure that there are no exceptions from Postgres after configuration
-
+        state: restarted 
 - 
   # Create default user
   hosts: localhost
