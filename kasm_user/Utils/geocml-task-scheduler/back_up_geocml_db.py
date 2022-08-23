@@ -35,7 +35,11 @@ def back_up_geocml_db():
 
             if delete_backup_dir: # delete the timestamped backup dir if there are no tables to back up
                 delete_backup_dir = False
-            f = open('/home/kasm-user/DBBackups/{}/{}.sql'.format(back_up_timestamp, table[2]), 'w')
+            f = open('/home/kasm-user/DBBackups/{}/{}.{}.sql'.format(back_up_timestamp, schema[0], table[2]), 'w')
+            if not schema[0] == 'public':
+                cursor.execute('SELECT DISTINCT grantee FROM information_schema.role_table_grants WHERE table_schema = \'{}\''.format(schema[0]))
+                schema_owner = cursor.fetchall()
+                f.write('CREATE SCHEMA IF NOT EXISTS {} AUTHORIZATION {};\n'.format(schema[0], schema_owner[0][0]))
             cursor.execute('SELECT column_name, udt_name FROM information_schema.columns WHERE table_name = \'{}\''
                     .format(table[2]))
             columns_and_data = []
