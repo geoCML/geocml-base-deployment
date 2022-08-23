@@ -6,7 +6,7 @@ from task_logger import log
 ignore_tables = ('spatial_ref_sys', 'geometry_columns', 'geography_columns')
 ignore_schemas = ('pg_catalog', 'information_schema')
 
-def back_up_geocml_db():
+def backup_geocml_db():
     try:
         conn = psycopg2.connect(dbname='geocml_db',
                                 user='postgres',
@@ -14,13 +14,13 @@ def back_up_geocml_db():
                                 host='127.0.0.1',
                                 port=5432)
     except psycopg2.OperationalError:
-        log("Couldn't connect to geocml_db; is the postgresql service started?")
+        log('Couldn\'t connect to geocml_db; is the postgresql service started?')
         return
     cursor = conn.cursor()
     cursor.execute('SELECT DISTINCT table_schema FROM information_schema.tables;')
     schemas = cursor.fetchall()
     back_up_timestamp = time.time()
-    path_to_backup_dir = Path("/home/kasm-user/DBBackups/{}".format(back_up_timestamp))
+    path_to_backup_dir = Path('/home/kasm-user/DBBackups/{}'.format(back_up_timestamp))
     path_to_backup_dir.mkdir(parents=True, exist_ok=True)
 
     for schema in schemas:
