@@ -55,10 +55,10 @@ def backup_geocml_db():
                 formatted_row = [] 
                 for item in row:
                     if isinstance(item, str):
-                        item = item.replace(r"\'", r"''") # converts Python escape sequences to Postgres escape sequences                   
+                        item = item.replace(r"\'", r"''") # converts Python escape sequences to Postgres escape sequences
                     formatted_row.append(item)
                 row = tuple(formatted_row)
-                f.write('INSERT INTO {}.{} VALUES {};\n'.format(schema[0], table[2], row))
+                f.write('INSERT INTO {}.{} VALUES {};\n'.format(schema[0], table[2], row).replace('None', 'NULL'))
             cursor.execute('SELECT tableowner FROM pg_tables WHERE tablename = \'{}\''.format(table[2]))
             table_owner = cursor.fetchall()
             if schema[0] == 'public':
