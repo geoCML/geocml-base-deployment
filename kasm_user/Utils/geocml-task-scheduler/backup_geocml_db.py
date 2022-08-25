@@ -61,6 +61,12 @@ def backup_geocml_db():
                 f.write('INSERT INTO {}.{} VALUES {};\n'.format(schema[0], table[2], row))
             cursor.execute('SELECT tableowner FROM pg_tables WHERE tablename = \'{}\''.format(table[2]))
             table_owner = cursor.fetchall()
+            if schema[0] == 'public':
+                cursor.execute('SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = \'p\' AND conrelid::regclass::text = \'{}\';'.format(table[2]))
+            else:
+                cursor.execute('SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = \'p\' AND conrelid::regclass::text = \'{}.{}\';'.format(schema[0], table[2]))
+            pk = cursor.fetchall()
+            f.write('ALTER TABLE {}.{} ADD {};\n'.format(schema[0], table[2], pk[0][0]))
             f.write('ALTER TABLE {}.{} OWNER TO {};'.format(schema[0], table[2], table_owner[0][0]))
             f.close()
     if delete_backup_dir: # nothing to back up
