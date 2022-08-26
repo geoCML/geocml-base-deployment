@@ -22,19 +22,20 @@ def backup_geocml_db():
     back_up_timestamp = time.time()
     path_to_backup_dir = Path('/home/kasm-user/DBBackups/{}'.format(back_up_timestamp))
     path_to_backup_dir.mkdir(parents=True, exist_ok=True)
-
+    delete_backup_dir = True
+    
     for schema in schemas:
         if schema[0] in ignore_schemas:
             continue
         cursor.execute('SELECT * FROM information_schema.tables WHERE table_schema = \'{}\';'.format(schema[0]))
         tables = cursor.fetchall() 
-        delete_backup_dir = True
+
         for table in tables:
             if table[2] in ignore_tables:
                 continue
 
-            if delete_backup_dir: # delete the timestamped backup dir if there are no tables to back up
-                delete_backup_dir = False
+            delete_backup_dir = False
+            
             f = open('/home/kasm-user/DBBackups/{}/{}.{}.sql'.format(back_up_timestamp, schema[0], table[2]), 'w')
             if not schema[0] == 'public':
                 cursor.execute('SELECT DISTINCT grantee FROM information_schema.role_table_grants WHERE table_schema = \'{}\''.format(schema[0]))
