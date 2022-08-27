@@ -21,7 +21,7 @@ RUN curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | apt-key add &
 RUN apt install -y pgadmin4-desktop
 
 # Install Python packages with pip
-RUN apt install -y python3-pip && pip install pint && pip install markupsafe==2.0.1
+RUN apt install -y python3-pip && pip install pint
 
 # install Ansible per 
 # https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu
