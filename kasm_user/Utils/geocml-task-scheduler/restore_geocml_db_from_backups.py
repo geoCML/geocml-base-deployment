@@ -34,11 +34,24 @@ def restore_geocml_db_from_backups():
         return 0
 
     log('Restoring geocml_db from {}'.format(most_recent_backup))
-    cursor = conn.cursor()
-    for sql_backup_file in os.listdir(most_recent_backup):
-        if sql_backup_file.split('.')[-1] == 'sql':
-            log('Found SQL file {}'.format(sql_backup_file))
-            cursor.execute(open('{}/{}'.format(most_recent_backup, sql_backup_file), 'r').read())
+    cursor = conn.cursor() 
+    for sql_schema_file in os.listdir(most_recent_backup): # rebuild table schema
+        if sql_schema_file.split(':')[0] == 'schema':
+            log('Found SQL schema file {}'.format(sql_schema_file))
+            cursor.execute(open('{}/{}'.format(most_recent_backup, sql_schema_file), 'r').read())
+
+    conn.commit() # commit schema changes to the database before loading data from the CSV
+
+    for csv_data_file in os.listdir(most_recent_backup): # load data from CSV backups
+        file_name_split = csv_data_file.split(':')
+
+        if file_name_split[0] == 'data':
+            log('Found CSV data file {}'.format(csv_data_file))
+            file_name_split = file_name_split[1].split('.') 
+            cursor.copy_from(open('{}/{}'.format(most_recent_backup, csv_data_file), 'r'), 
+                    '{}.{}'.format(file_name_split[0], file_name_split[1]),
+                    sep=',') # TODO: all tables are empty after backup...
+
     conn.commit()
     cursor.close()
     conn.close()

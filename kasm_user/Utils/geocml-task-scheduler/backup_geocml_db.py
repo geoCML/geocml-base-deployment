@@ -27,7 +27,9 @@ def backup_geocml_db():
     for schema in schemas:
         if schema[0] in ignore_schemas:
             continue
-        cursor.execute('SELECT * FROM information_schema.tables WHERE table_schema = \'{}\';'.format(schema[0]))
+        
+        cursor.execute('SELECT * FROM information_schema.tables WHERE table_schema = \'{}\';'
+                .format(schema[0]))
         tables = cursor.fetchall() 
 
         for table in tables:
@@ -35,41 +37,47 @@ def backup_geocml_db():
                 continue
 
             delete_backup_dir = False
-            
-            f = open('/home/kasm-user/DBBackups/{}/{}.{}.sql'.format(back_up_timestamp, schema[0], table[2]), 'w')
+
+            # Write to schema file
+            schema_file = open('/home/kasm-user/DBBackups/{}/schema:{}.{}.sql'.format(back_up_timestamp, schema[0], table[2]), 'w')
+
             if not schema[0] == 'public':
-                cursor.execute('SELECT DISTINCT grantee FROM information_schema.role_table_grants WHERE table_schema = \'{}\''.format(schema[0]))
+                cursor.execute('SELECT DISTINCT grantee FROM information_schema.role_table_grants WHERE table_schema = \'{}\''
+                        .format(schema[0]))
                 schema_owner = cursor.fetchall()
-                f.write('CREATE SCHEMA IF NOT EXISTS {} AUTHORIZATION {};\n'.format(schema[0], schema_owner[0][0]))
+                schema_file.write('CREATE SCHEMA IF NOT EXISTS {} AUTHORIZATION {};\n'
+                        .format(schema[0], schema_owner[0][0]))
+
             cursor.execute('SELECT column_name, udt_name FROM information_schema.columns WHERE table_name = \'{}\''
                     .format(table[2]))
-            columns_and_data = []
+            columns_and_datatypes = []
             for row in cursor:
                 if len(row) == 3: # column has a constraint                   
-                    columns_and_data.append('{} {} {}'.format(row[0], row[1], row[2]))
+                    columns_and_datatypes.append('{} {} {}'.format(row[0], row[1], row[2]))
                 else:
-                    columns_and_data.append('{} {}'.format(row[0], row[1]))
-            columns_and_data = ', '.join(columns_and_data)
-            f.write('CREATE TABLE IF NOT EXISTS {}.{} ({});\n'.format(schema[0], table[2], columns_and_data))  
-            cursor.execute('SELECT * FROM {}.{};'.format(schema[0], table[2]))
-            for row in cursor: 
-                formatted_row = [] 
-                for item in row:
-                    if isinstance(item, str):
-                        item = item.replace(r"\'", r"''") # converts Python escape sequences to Postgres escape sequences
-                    formatted_row.append(item)
-                row = tuple(formatted_row)
-                f.write('INSERT INTO {}.{} VALUES {};\n'.format(schema[0], table[2], row).replace('None', 'NULL'))
+                    columns_and_datatypes.append('{} {}'.format(row[0], row[1]))
+            columns_and_datatypes = ', '.join(columns_and_datatypes)
+            schema_file.write('CREATE TABLE IF NOT EXISTS {}.{} ({});\n'.format(schema[0], table[2], columns_and_datatypes))  
             cursor.execute('SELECT tableowner FROM pg_tables WHERE tablename = \'{}\''.format(table[2]))
             table_owner = cursor.fetchall()
-            if schema[0] == 'public':
+
+            if schema[0] == 'public': # TODO: refactor this
                 cursor.execute('SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = \'p\' AND conrelid::regclass::text = \'{}\';'.format(table[2]))
             else:
                 cursor.execute('SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = \'p\' AND conrelid::regclass::text = \'{}.{}\';'.format(schema[0], table[2]))
+
             pk = cursor.fetchall()
-            f.write('ALTER TABLE {}.{} ADD {};\n'.format(schema[0], table[2], pk[0][0]))
-            f.write('ALTER TABLE {}.{} OWNER TO {};'.format(schema[0], table[2], table_owner[0][0]))
-            f.close()
+
+            if len(pk) > 0: # catch for when there is no primary key set on the database table
+                schema_file.write('ALTER TABLE {}.{} ADD {};\n'.format(schema[0], table[2], pk[0][0]))
+            schema_file.write('ALTER TABLE {}.{} OWNER TO {};'.format(schema[0], table[2], table_owner[0][0]))
+            schema_file.close()
+             
+            # Write to data file
+            data_file = open('/home/kasm-user/DBBackups/{}/data:{}.{}.csv'.format(back_up_timestamp, schema[0], table[2]), 'w')
+            cursor.copy_to(data_file, '{}.{}'.format(schema[0], table[2]), sep=',')
+            data_file.close()
+
     if delete_backup_dir: # nothing to back up
         path_to_backup_dir.rmdir()
     cursor.close()
