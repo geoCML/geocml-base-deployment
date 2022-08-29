@@ -25,7 +25,7 @@ RUN apt install -y python3-pip && pip install pint
 
 # install Ansible per 
 # https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-ubuntu
-RUN add-apt-repository --yes --update ppa:ansible/ansible && apt install -y ansible && rm -rf /var/lib/apt/lists/*
+RUN add-apt-repository --yes --update ppa:ansible/ansible && apt install -y ansible
 
 # run Ansible commands
 COPY ./requirements.yaml ./playbook.yaml ./
@@ -33,8 +33,7 @@ RUN ansible-galaxy install -r requirements.yaml && ansible-playbook -i,localhost
 # Custom Desktop Background - replace bg_custom.png on disk with your own background image
 
 # Uninstall Ansible stuff
-RUN rm -rf ~/.ansible
-RUN apt remove -y ansible
+RUN rm -rf $HOME/.ansible && apt purge -y ansible*
 
 COPY ./bg_custom.png /usr/share/extra/backgrounds/bg_default.png
 
@@ -48,6 +47,9 @@ COPY devResources/su /etc/pam.d/su
 RUN rm -rf $HOME/install_files/
 
 ######### End Customizations ###########
+
+# Remove install cache
+RUN apt clean autoclean && apt autoremove -y && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 RUN chown 1000:0 $HOME
 RUN $STARTUPDIR/set_user_permission.sh $HOME
