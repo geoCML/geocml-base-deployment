@@ -1,12 +1,12 @@
 # Disclaimer
 
-This license applies only to the source code that is directly maintained in 
-this git repository, it does not extend to dependencies from outside of this 
-repository, to include other projects owned and/or maintained by Kasm Technologies. 
+This license applies only to the source code that is directly maintained in
+this git repository, it does not extend to dependencies from outside of this
+repository, to include other projects owned and/or maintained by Kasm Technologies.
 
 # MIT License
 
-Copyright (c) 2022 Mach 30
+Copyright (c) 2022 Contributors of geocml-base-image
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
