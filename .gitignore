@@ -1,3 +1,4 @@
-!kasm_user/
 kasm_user/*
 !kasm_user/_README
+!kasm_user/Utils
+**/__pycache__/**

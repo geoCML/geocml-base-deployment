@@ -74,6 +74,10 @@
         users: postgres 
         method: peer
         create: yes
+  - name: Set postgres' password
+    become_user: postgres
+    community.postgresql.postgresql_query:
+        query: ALTER USER postgres PASSWORD 'admin';
   - name: Create new Postgres user
     become_user: postgres
     community.postgresql.postgresql_user:
@@ -117,8 +121,7 @@
     service:
         enabled: yes
         name: postgresql
-        state: restarted # TODO: add a test here to make sure that there are no exceptions from Postgres after configuration
-
+        state: restarted 
 - 
   # Create default user
   hosts: localhost

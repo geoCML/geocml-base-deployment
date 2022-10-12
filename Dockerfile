@@ -43,6 +43,9 @@ COPY ./terminalrc /home/kasm-default-profile/.config/xfce4/terminal/terminalrc
 
 COPY devResources/su /etc/pam.d/su
 
+COPY devResources/custom_startup.sh $STARTUPDIR/custom_startup.sh
+RUN chmod +x $STARTUPDIR/custom_startup.sh
+
 # clean up install_files/
 RUN rm -rf $HOME/install_files/
 
