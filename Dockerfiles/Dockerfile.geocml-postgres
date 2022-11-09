@@ -1,0 +1,38 @@
+FROM ubuntu:latest
+USER root
+
+RUN apt update
+
+# Install sudo (required by Ansible)
+RUN apt install -y sudo
+
+# Install Pip and psycopg2 (required by Ansible)
+RUN apt install -y python3-pip && pip install psycopg2-binary
+
+# Install PostgreSQL, PostGIS
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt install -y postgresql postgis 
+
+# Install Ansible
+RUN apt install -y ansible
+
+# Install Ansible dependencies and run through playbook
+COPY ./ansible-playbooks/geocml-postgres-requirements.yaml ./ansible-playbooks/geocml-postgres-playbook.yaml ./
+RUN ansible-galaxy install -r geocml-postgres-requirements.yaml && ansible-playbook -i,localhost geocml-postgres-playbook.yaml --tags "all" && rm -f ./*.yaml
+
+######### Customize Container Here ###########
+######### End Customizations ###########
+
+# Uninstall Ansible stuff
+RUN rm -rf $HOME/.ansible && apt purge -y ansible*
+
+# Uninstall pip and psycopg2 binary
+RUN pip uninstall -y psycopg2-binary && apt remove -y python3-pip
+
+# Remove install cache
+RUN apt clean autoclean && apt autoremove -y && rm -rf /var/lib/{apt,dpkg,cache,log}/
+
+# Copy run script to container
+COPY ../build-resources/start-postgresql-and-keep-container-running.sh /start-postgresql-and-keep-container-running.sh
+
+CMD [ "sh", "/start-postgresql-and-keep-container-running.sh" ]
