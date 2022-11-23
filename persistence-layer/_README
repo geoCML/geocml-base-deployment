@@ -1,0 +1,3 @@
+This folder is for persisting the user account when running the image directly from docker.
+
+DBBackups is used to store sql backup files from geocml_db

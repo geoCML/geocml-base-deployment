@@ -1,4 +1,3 @@
-kasm_user/*
-!kasm_user/_README
-!kasm_user/Utils
+persistence-layer/*
+!persistence-layer/*/_README
 **/__pycache__/**
