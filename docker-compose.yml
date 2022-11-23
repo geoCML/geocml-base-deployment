@@ -4,7 +4,7 @@ services:
   geocml-task-scheduler:
     build: 
       dockerfile: ./Dockerfiles/Dockerfile.geocml-task-scheduler
-    image: ghcr.io/geocml/geocml-task-scheduler:deprecate-kasm
+    image: ghcr.io/geocml/geocml-task-scheduler:latest
     hostname: geocml-task-scheduler
     networks:
       - geocml-network
@@ -15,7 +15,7 @@ services:
   geocml-desktop:
     build: 
       dockerfile: ./Dockerfiles/Dockerfile.geocml-desktop
-    image: ghcr.io/geocml/geocml-desktop:deprecate-kasm
+    image: ghcr.io/geocml/geocml-desktop:latest
     ports:
       - "5901:5901"
     environment:
@@ -36,7 +36,7 @@ services:
   geocml-postgres:
     build: 
       dockerfile: ./Dockerfiles/Dockerfile.geocml-postgres
-    image: ghcr.io/geocml/geocml-postgres:deprecate-kasm
+    image: ghcr.io/geocml/geocml-postgres:latest
     ports:
       - "5432:5432"
     hostname: geocml-postgres
