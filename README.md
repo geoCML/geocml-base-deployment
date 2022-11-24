@@ -17,7 +17,7 @@ Each microservice in this deployment can communicate over an internal network ca
 
 ## Using the image locally
 
-Once built, the image can be pushed into the Kasm server per Kasm documentation or it can be run locally on port 6901 using docker-compose.
+Once built, the image can be run locally using docker-compose.
 
 - **Starting the image locally:** Run `docker-compose up -d`
 - **Stopping the image locally:** Run `docker-compose down`
