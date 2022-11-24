@@ -42,6 +42,19 @@ services:
     hostname: geocml-postgres
     networks:
       - geocml-network
+  geocml-server:
+    build: 
+      dockerfile: ./Dockerfiles/Dockerfile.geocml-server
+    image: ghcr.io/geocml/geocml-server:latest
+    ports:
+      - "80:80"
+    volumes:
+      - type: bind
+        source: ./persistence-layer
+        target: /Persistence
+    hostname: geocml-server
+    networks:
+      - geocml-network
 networks:
   geocml-network:
     external: true

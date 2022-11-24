@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+    <title>geoCML Server Portal</title>
+    <script>
+      function copyValueToClipboard(id) {
+          var button = document.getElementById(id)
+          navigator.clipboard.writeText(button.value)
+      }
+    </script>
+  </head>
+  <body>
+    {% load static %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+      <img
+        src="{% static 'papapishu-camel-02-200h.png' %}"
+        style="width: 50px; height: auto;"
+        class="px-2"
+        alt="geoCML logo"
+      />
+      <h1 class="navbar-brand px-2">geoCML Server Portal</h1>
+    </nav>
+
+    <div class="container-fluid bg-dark text-white p-2">
+      <h2 class="row justify-content-center">Welcome to geoCML!</h2>
+      <p class="row justify-content-center">
+        This deployment is hosting geoCML v{{version}} at {{hostname}}.
+      </p>
+    </div>
+
+    <div class="p-4"></div>
+    <!-- Spacer -->
+
+    <div class="container-fluid" style="width: 50%;">
+      <h2 class="row justify-content-center">
+        Description of {{name}}
+      </h2>
+      <p class="row justify-content-center p-3">
+        {{description}}
+      </p>
+    </div>
+
+    <div class="container-fluid" style="width: 50%;">
+      <p class="row justify-content-center p-1">
+        {{copyright}}
+      </p>
+    </div>
+
+    <div class="p-4"></div>
+    <!-- Spacer -->
+
+    <div class="container-fluid">
+      <h2 class="row justify-content-center">Quick Actions</h2>
+      <div class="row justify-content-center py-1">
+        <a
+          type="button"
+          class="btn btn-dark"
+          style="width: 400px;"
+          href="/webmap"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-map"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M15.817.113A.5.5 0 0 1 16 .5v14a.5.5 0 0 1-.402.49l-5 1a.502.502 0 0 1-.196 0L5.5 15.01l-4.902.98A.5.5 0 0 1 0 15.5v-14a.5.5 0 0 1 .402-.49l5-1a.5.5 0 0 1 .196 0L10.5.99l4.902-.98a.5.5 0 0 1 .415.103zM10 1.91l-4-.8v12.98l4 .8V1.91zm1 12.98 4-.8V1.11l-4 .8v12.98zm-6-.8V1.11l-4 .8v12.98l4-.8z"
+            />
+          </svg>
+          View Project as Web Map
+        </a>
+      </div>
+      <div class="row justify-content-center py-1">
+        <a
+          href="/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities"
+          type="button"
+          class="btn btn-dark"
+          style="width: 400px;"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-cloud"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"
+            />
+          </svg>
+          Open WMS (GetCapabilities)
+        </a>
+      </div>
+      <div class="row justify-content-center py-1">
+        <a
+          href="/cgi-bin/qgis_mapserv.fcgi?SERVICE=WFS&VERSION=1.3.0&REQUEST=GetCapabilities"
+          type="button"
+          class="btn btn-dark"
+          style="width: 400px;"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-cloud"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"
+            />
+          </svg>
+          Open WFS (GetCapabilities)
+        </a>
+      </div>
+      <div class="row justify-content-center py-1">
+        <a
+          href="/cgi-bin/qgis_mapserv.fcgi?SERVICE=WCS&VERSION=1.3.0&REQUEST=GetCapabilities"
+          type="button"
+          class="btn btn-dark"
+          style="width: 400px;"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-cloud"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"
+            />
+          </svg>
+          Open WCS (GetCapabilities)
+        </a>
+      </div>
+      <div class="row justify-content-center py-1">
+        <button
+          id="vnc-connection-details"
+          value="{{vnc_connection_details}}"
+          type="button"
+          class="btn btn-dark"
+          style="width: 400px;"
+          onclick="copyValueToClipboard('vnc-connection-details')"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-display"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M0 4s0-2 2-2h12s2 0 2 2v6s0 2-2 2h-4c0 .667.083 1.167.25 1.5H11a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1h.75c.167-.333.25-.833.25-1.5H2s-2 0-2-2V4zm1.398-.855a.758.758 0 0 0-.254.302A1.46 1.46 0 0 0 1 4.01V10c0 .325.078.502.145.602.07.105.17.188.302.254a1.464 1.464 0 0 0 .538.143L2.01 11H14c.325 0 .502-.078.602-.145a.758.758 0 0 0 .254-.302 1.464 1.464 0 0 0 .143-.538L15 9.99V4c0-.325-.078-.502-.145-.602a.757.757 0 0 0-.302-.254A1.46 1.46 0 0 0 13.99 3H2c-.325 0-.502.078-.602.145z"
+            />
+          </svg>
+          Copy geoCML Desktop VNC URL
+        </button>
+      </div>
+      <div class="row justify-content-center py-1">
+        <button
+          id="postgres-connection-details"
+          value="{{postgres_connection_details}}"
+          type="button"
+          class="btn btn-dark"
+          style="width: 400px;"
+          onclick="copyValueToClipboard('postgres-connection-details')"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-database"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M4.318 2.687C5.234 2.271 6.536 2 8 2s2.766.27 3.682.687C12.644 3.125 13 3.627 13 4c0 .374-.356.875-1.318 1.313C10.766 5.729 9.464 6 8 6s-2.766-.27-3.682-.687C3.356 4.875 3 4.373 3 4c0-.374.356-.875 1.318-1.313ZM13 5.698V7c0 .374-.356.875-1.318 1.313C10.766 8.729 9.464 9 8 9s-2.766-.27-3.682-.687C3.356 7.875 3 7.373 3 7V5.698c.271.202.58.378.904.525C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777A4.92 4.92 0 0 0 13 5.698ZM14 4c0-1.007-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1s-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4v9c0 1.007.875 1.755 1.904 2.223C4.978 15.71 6.427 16 8 16s3.022-.289 4.096-.777C13.125 14.755 14 14.007 14 13V4Zm-1 4.698V10c0 .374-.356.875-1.318 1.313C10.766 11.729 9.464 12 8 12s-2.766-.27-3.682-.687C3.356 10.875 3 10.373 3 10V8.698c.271.202.58.378.904.525C4.978 9.71 6.427 10 8 10s3.022-.289 4.096-.777A4.92 4.92 0 0 0 13 8.698Zm0 3V13c0 .374-.356.875-1.318 1.313C10.766 14.729 9.464 15 8 15s-2.766-.27-3.682-.687C3.356 13.875 3 13.373 3 13v-1.302c.271.202.58.378.904.525C4.978 12.71 6.427 13 8 13s3.022-.289 4.096-.777c.324-.147.633-.323.904-.525Z"
+            />
+          </svg>
+          Copy geocml_db Postgres Connection Details
+        </button>
+      </div>
+    </div>
+
+    <div class="p-4"></div>
+    <!-- Spacer -->
+
+    <div class="container-fluid">
+      <h2 class="row justify-content-center py-2">
+        Deployment Health Dashboard
+      </h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Service Name</th>
+            <th>Default Ports</th>
+            <th>Operational Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>geocml-desktop</td>
+            <td>5901 (VNC)</td>
+            <td>
+              {% if geocml_desktop_status %}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="green"
+                class="bi bi-circle-fill"
+                viewBox="0 0 16 16"
+              >
+                <circle cx="8" cy="8" r="8" />
+              </svg>
+              {% else %}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="red"
+                class="bi bi-circle-fill"
+                viewBox="0 0 16 16"
+              >
+                <circle cx="8" cy="8" r="8" />
+              </svg>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>geocml-postgres</td>
+            <td>5432</td>
+            <td>
+              {% if geocml_postgres_status %}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="green"
+                class="bi bi-circle-fill"
+                viewBox="0 0 16 16"
+              >
+                <circle cx="8" cy="8" r="8" />
+              </svg>
+              {% else %}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="red"
+                class="bi bi-circle-fill"
+                viewBox="0 0 16 16"
+              >
+                <circle cx="8" cy="8" r="8" />
+              </svg>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>geocml-server</td>
+            <td>8080</td>
+            <td>
+              {% if geocml_server_status %}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="green"
+                class="bi bi-circle-fill"
+                viewBox="0 0 16 16"
+              >
+                <circle cx="8" cy="8" r="8" />
+              </svg>
+              {% else %}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="red"
+                class="bi bi-circle-fill"
+                viewBox="0 0 16 16"
+              >
+                <circle cx="8" cy="8" r="8" />
+              </svg>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>geocml-task-scheduler</td>
+            <td>----</td>
+            <td>
+              {% if geocml_task_scheduler_status %}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="green"
+                class="bi bi-circle-fill"
+                viewBox="0 0 16 16"
+              >
+                <circle cx="8" cy="8" r="8" />
+              </svg>
+              {% else %}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="red"
+                class="bi bi-circle-fill"
+                viewBox="0 0 16 16"
+              >
+                <circle cx="8" cy="8" r="8" />
+              </svg>
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

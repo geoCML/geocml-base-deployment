@@ -1,0 +1,26 @@
+---
+- # Configure apache2
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: Enable cgid
+      community.general.apache2_module:
+        state: present
+        name: cgid 
+        force: true
+    - name: Enable fcgid 
+      community.general.apache2_module:
+        state: present
+        name: fcgid
+        force: true
+    - name: Make QGIS Server log dir
+      ansible.builtin.command: mkdir -p /var/log/qgis/
+    - name: Change QGIS Server log dir's owner to www-data
+      ansible.builtin.command: chown www-data:www-data /var/log/qgis
+    - name: Make qgisserverdb dir
+      ansible.builtin.command: mkdir -p /home/qgis/qgisserverdb
+    - name: Change qgisserverdb dir's owner to www-data
+      ansible.builtin.command: chown www-data:www-data /home/qgis/qgisserverdb
+...

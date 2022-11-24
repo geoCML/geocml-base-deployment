@@ -16,7 +16,7 @@ RUN curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | gpg --dearmor
 RUN apt install -y pgadmin4-desktop
 
 # Copy geoCML wallpaper to backgrounds directory
-COPY ../build-resources/geocml-wallpaper.png /usr/share/backgrounds/geocml-wallpaper.png
+COPY ../build-resources/geocml-desktop/geocml-wallpaper.png /usr/share/backgrounds/geocml-wallpaper.png
 
 ######### Customize Container Here ###########
 ######### End Customizations ###########

@@ -1,3 +1,5 @@
 persistence-layer/*
 !persistence-layer/*/_README
+!persistence-layer/geocml-project.qgz
+!persistence-layer/portal-config.yaml
 **/__pycache__/**
