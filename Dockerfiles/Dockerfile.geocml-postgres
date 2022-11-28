@@ -32,7 +32,4 @@ RUN pip uninstall -y psycopg2-binary && apt remove -y python3-pip
 # Remove install cache
 RUN apt clean autoclean && apt autoremove -y && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
-# Copy run script to container
-COPY ../build-resources/start-postgresql-and-keep-container-running.sh /start-postgresql-and-keep-container-running.sh
-
-CMD [ "sh", "/start-postgresql-and-keep-container-running.sh" ]
+CMD service postgresql start && tail -f /dev/null

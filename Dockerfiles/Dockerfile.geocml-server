@@ -1,0 +1,52 @@
+FROM ubuntu:latest
+
+RUN apt update
+
+# Install QGIS Server
+RUN apt install -y qgis-server --no-install-recommends --no-install-suggests
+
+# Install Apache and dependencies
+RUN apt install -y apache2 libapache2-mod-wsgi-py3 libapache2-mod-fcgid
+
+# Copy Apache conf file to container
+COPY ../build-resources/geocml-server/geocml.server.conf /etc/apache2/sites-available/geocml.server.conf
+
+# Enable geocml.server and Apache
+RUN a2ensite geocml.server
+
+# Install Ansible
+RUN apt install -y ansible
+
+# Install Ansible dependencies and run through playbook
+COPY ./ansible-playbooks/geocml-server-requirements.yaml ./ansible-playbooks/geocml-server-playbook.yaml ./
+RUN ansible-galaxy install -r geocml-server-requirements.yaml && ansible-playbook -i,localhost geocml-server-playbook.yaml --tags "all" && rm -f ./*.yaml
+
+# Copy portal source to container
+ADD ../build-resources/geocml-server/portal/ /var/www/html/
+
+# Install Python, Pip, and Django
+RUN apt install -y python3 && apt install -y python3-pip && python3 -m pip install Django
+
+# Install required Python libraries
+RUN python3 -m pip install -r /var/www/html/portal/requirements.txt
+
+# Install ping
+RUN apt install -y iputils-ping
+
+######### Customize Container Here ###########
+######### End Customizations ###########
+
+# Add IPs to known host list
+RUN sh -c "echo 'geocml-server geocml.server' >> /etc/hosts"``.
+RUN sh -c "echo '127.0.0.1 geocml.server' >> /etc/hosts"``.
+
+# Copy start script
+COPY ./build-resources/geocml-server/start-geocml-server.sh /start-geocml-server.sh
+
+# Uninstall Ansible stuff
+RUN rm -rf $HOME/.ansible && apt purge -y ansible*
+
+# Remove install cache
+RUN apt clean autoclean && apt autoremove -y && rm -rf /var/lib/{apt,dpkg,cache,log}/
+
+CMD sh /start-geocml-server.sh

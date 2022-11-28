@@ -11,13 +11,10 @@ RUN pip install psycopg2-binary
 # Create task_log file
 RUN touch /task_log
 
-# Create DBBackups dir (bound to /persistence-layer/DBBackups)
-RUN mkdir /DBBackups
-
 # Copy gTS to the container
-COPY ./lib/geocml-task-scheduler/ /geocml-task-scheduler
+COPY ./build-resources/geocml-task-scheduler/geocml-task-scheduler/ /geocml-task-scheduler
 
 ######### Customize Container Here ###########
 ######### End Customizations ###########
 
-CMD [ "python3", "/geocml-task-scheduler/schedule.py" ]
+CMD python3 /geocml-task-scheduler/schedule.py
