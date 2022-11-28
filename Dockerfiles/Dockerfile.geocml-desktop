@@ -15,6 +15,9 @@ RUN apt install -y gpg ca-certificates software-properties-common curl
 RUN curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg && sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update' 
 RUN apt install -y pgadmin4-desktop
 
+# Install Evince PDF viewer
+RUN apt install -y evince
+
 # Copy geoCML wallpaper to backgrounds directory
 COPY ../build-resources/geocml-desktop/geocml-wallpaper.png /usr/share/backgrounds/geocml-wallpaper.png
 
