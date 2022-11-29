@@ -9,7 +9,7 @@ RUN apt install -y qgis-server --no-install-recommends --no-install-suggests
 RUN apt install -y apache2 libapache2-mod-wsgi-py3 libapache2-mod-fcgid
 
 # Copy Apache conf file to container
-COPY ../build-resources/geocml-server/geocml.server.conf /etc/apache2/sites-available/geocml.server.conf
+COPY ./build-resources/geocml-server/geocml.server.conf /etc/apache2/sites-available/geocml.server.conf
 
 # Enable geocml.server and Apache
 RUN a2ensite geocml.server
@@ -22,7 +22,7 @@ COPY ./ansible-playbooks/geocml-server-requirements.yaml ./ansible-playbooks/geo
 RUN ansible-galaxy install -r geocml-server-requirements.yaml && ansible-playbook -i,localhost geocml-server-playbook.yaml --tags "all" && rm -f ./*.yaml
 
 # Copy portal source to container
-ADD ../build-resources/geocml-server/portal/ /var/www/html/
+ADD ./build-resources/geocml-server/portal/ /var/www/html/
 
 # Install Python, Pip, and Django
 RUN apt install -y python3 && apt install -y python3-pip && python3 -m pip install Django
