@@ -19,7 +19,7 @@ RUN apt install -y pgadmin4-desktop
 RUN apt install -y evince
 
 # Copy geoCML wallpaper to backgrounds directory
-COPY ../build-resources/geocml-desktop/geocml-wallpaper.png /usr/share/backgrounds/geocml-wallpaper.png
+COPY ./build-resources/geocml-desktop/geocml-wallpaper.png /usr/share/backgrounds/geocml-wallpaper.png
 
 ######### Customize Container Here ###########
 ######### End Customizations ###########

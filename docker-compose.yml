@@ -3,6 +3,7 @@ version: "3.7"
 services:
   geocml-task-scheduler:
     build: 
+      context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-task-scheduler
     image: ghcr.io/geocml/geocml-task-scheduler:latest
     hostname: geocml-task-scheduler
@@ -13,7 +14,8 @@ services:
         source: ./persistence-layer/DBBackups
         target: /DBBackups
   geocml-desktop:
-    build: 
+    build:
+      context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-desktop
     image: ghcr.io/geocml/geocml-desktop:latest
     ports:
@@ -23,7 +25,6 @@ services:
     shm_size: '512m'
     stdin_open: true # docker run -i
     tty: true        # docker run -t
-    network_mode: bridge
     volumes:
       - type: bind
         source: ./persistence-layer
@@ -34,7 +35,8 @@ services:
     networks:
       - geocml-network
   geocml-postgres:
-    build: 
+    build:
+      context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-postgres
     image: ghcr.io/geocml/geocml-postgres:latest
     ports:
@@ -43,7 +45,8 @@ services:
     networks:
       - geocml-network
   geocml-server:
-    build: 
+    build:
+      context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-server
     image: ghcr.io/geocml/geocml-server:latest
     ports:
