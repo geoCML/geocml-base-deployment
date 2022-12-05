@@ -14,17 +14,18 @@ def restore_geocml_db_from_backups():
         log('Couldn\'t connect to geocml_db; is the postgresql service started?')
         return
 
+    db_backups_dir = os.path.join(os.sep, 'DBBackups')
     now = time()
     delta = float('inf') 
     most_recent_backup = ''
-    for subdir in os.walk('/DBBackups/'):
+    for subdir in os.walk(db_backups_dir):
         try:
             subdir_timestamp = float(subdir[0].split('/')[-1])
-            if  now - subdir_timestamp < delta:
+            if now - subdir_timestamp < delta:
                 delta = now - subdir_timestamp
                 most_recent_backup = subdir[0]
         except ValueError:
-            if not subdir[0] == '/DBBackups/':
+            if not subdir[0] == db_backups_dir:
                 log('Found something unexpected in backup directory, skipping over: {}'.format(subdir[0]))
 
     if most_recent_backup == '':
@@ -46,7 +47,7 @@ def restore_geocml_db_from_backups():
         if file_name_split[0] == 'data':
             log('Found CSV data file {}'.format(csv_data_file))
             file_name_split = file_name_split[1].split('.')
-            data_file = open(os.path.join('DBBackups', most_recent_backup, csv_data_file), 'r')
+            data_file = open(os.path.join(db_backups_dir, most_recent_backup, csv_data_file), 'r')
             cursor.copy_expert('COPY {}."{}" FROM STDIN DELIMITER \',\' CSV HEADER;'
                 .format(file_name_split[0], file_name_split[1]), data_file)
 
