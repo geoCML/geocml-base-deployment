@@ -42,14 +42,19 @@ def backup_geocml_db():
             schema_file = open('/DBBackups/{}/schema:{}.{}.sql'.format(back_up_timestamp, schema[0], table[2]), 'w')
 
             if not schema[0] == 'public':
-                cursor.execute('SELECT DISTINCT grantee FROM information_schema.role_table_grants WHERE table_schema = \'{}\''
+                cursor.execute('SELECT DISTINCT grantee FROM information_schema.role_table_grants WHERE table_schema = \'{}\';'
                         .format(schema[0]))
                 schema_owner = cursor.fetchall()
                 schema_file.write('CREATE SCHEMA IF NOT EXISTS {} AUTHORIZATION {};\n'
                         .format(schema[0], schema_owner[0][0]))
 
-            cursor.execute('SELECT column_name, udt_name FROM information_schema.columns WHERE table_name = \'{}\''
+            cursor.execute('SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = \'p\' AND conrelid::regclass::text LIKE \'%{}%\';'.format(table[2]))
+
+            pk = cursor.fetchall()
+
+            cursor.execute('SELECT column_name, udt_name FROM information_schema.columns WHERE table_name = \'{}\';'
                     .format(table[2]))
+
             columns_and_datatypes = []
             for row in cursor:
                 if len(row) == 3: # column has a constraint                   
@@ -57,25 +62,20 @@ def backup_geocml_db():
                 else:
                     columns_and_datatypes.append('{} {}'.format(row[0], row[1]))
             columns_and_datatypes = ', '.join(columns_and_datatypes)
-            schema_file.write('CREATE TABLE IF NOT EXISTS {}.{} ({});\n'.format(schema[0], table[2], columns_and_datatypes))  
-            cursor.execute('SELECT tableowner FROM pg_tables WHERE tablename = \'{}\''.format(table[2]))
+            if len(pk) > 0:
+                schema_file.write('CREATE TABLE IF NOT EXISTS {}."{}" ({}, {});\n'.format(schema[0], table[2], columns_and_datatypes, pk[0][0]))
+            else:
+                schema_file.write('CREATE TABLE IF NOT EXISTS {}."{}" ({});\n'.format(schema[0], table[2], columns_and_datatypes))
+
+            cursor.execute('SELECT tableowner FROM pg_tables WHERE tablename = \'{}\';'.format(table[2]))
             table_owner = cursor.fetchall()
 
-            if schema[0] == 'public': # TODO: refactor this
-                cursor.execute('SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = \'p\' AND conrelid::regclass::text = \'{}\';'.format(table[2]))
-            else:
-                cursor.execute('SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE contype = \'p\' AND conrelid::regclass::text = \'{}.{}\';'.format(schema[0], table[2]))
-
-            pk = cursor.fetchall()
-
-            if len(pk) > 0: # catch for when there is no primary key set on the database table
-                schema_file.write('ALTER TABLE {}.{} ADD {};\n'.format(schema[0], table[2], pk[0][0]))
-            schema_file.write('ALTER TABLE {}.{} OWNER TO {};'.format(schema[0], table[2], table_owner[0][0]))
+            schema_file.write('ALTER TABLE {}."{}" OWNER TO {};'.format(schema[0], table[2], table_owner[0][0]))
             schema_file.close()
              
             # Write to data file
             data_file = open('/DBBackups/{}/data:{}.{}.csv'.format(back_up_timestamp, schema[0], table[2]), 'w')
-            cursor.copy_expert('COPY {}.{} TO STDOUT WITH (FORMAT csv, DELIMITER \',\', HEADER FALSE)'.format(schema[0], table[2]), data_file)
+            cursor.copy_expert('COPY {}."{}" TO STDOUT WITH (FORMAT csv, DELIMITER \',\', HEADER FALSE);'.format(schema[0], table[2]), data_file)
             data_file.close()
 
     if delete_backup_dir: # nothing to back up
