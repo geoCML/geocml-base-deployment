@@ -5,6 +5,7 @@
 This repository hosts a base geoCML deployment. A base geoCML deployment consists of the following microservices:
 - geocml-desktop (the user entry point for your deployment)
 - geocml-postgres
+- geocml-server
 - geocml-task-scheduler
 
 Each microservice in this deployment can communicate over an internal network called geocml-network. Each microservice can be customized to fit the needs of your use case.
