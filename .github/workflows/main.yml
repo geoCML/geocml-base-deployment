@@ -18,6 +18,18 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dockerfile: ./Dockerfiles/Dockerfile.geocml-desktop
+            image: ghcr.io/${{ github.repository }}-desktop
+          - dockerfile: ./Dockerfiles/Dockerfile.geocml-desktop
+            image: ghcr.io/${{ github.repository }}-desktop
+          - dockerfile: ./Dockerfiles/Dockerfile.geocml-server
+            image: ghcr.io/${{ github.repository }}-server
+          - dockerfile: ./Dockerfiles/Dockerfile.geocml-task-scheduler
+            image: ghcr.io/${{ github.repository }}-task-scheduler
     permissions:
       packages: write
 
@@ -42,15 +54,10 @@ jobs:
           username: geovanni-bot
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build image
-        uses: docker/build-push-action@v2
+      - name: Build and push image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          tags: ${{ steps.docker_meta.outputs.tags }} 
-          file: ./Dockerfile
-          
-      - name: Push image
-        uses: docker/build-push-action@v2
-        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
-          file: ./Dockerfile    
