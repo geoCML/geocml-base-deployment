@@ -23,13 +23,11 @@ jobs:
       matrix:
         include:
           - dockerfile: ./Dockerfiles/Dockerfile.geocml-desktop
-            image: ghcr.io/${{ github.repository }}-desktop
-          - dockerfile: ./Dockerfiles/Dockerfile.geocml-desktop
-            image: ghcr.io/${{ github.repository }}-desktop
+            image: ghcr.io/${{ github.repository }}:desktop
           - dockerfile: ./Dockerfiles/Dockerfile.geocml-server
-            image: ghcr.io/${{ github.repository }}-server
+            image: ghcr.io/${{ github.repository }}:server
           - dockerfile: ./Dockerfiles/Dockerfile.geocml-task-scheduler
-            image: ghcr.io/${{ github.repository }}-task-scheduler
+            image: ghcr.io/${{ github.repository }}:task-scheduler
     permissions:
       packages: write
 
