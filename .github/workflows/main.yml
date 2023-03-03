@@ -47,6 +47,9 @@ jobs:
           - dockerfile: ./Dockerfiles/Dockerfile.geocml-task-scheduler
             image: ghcr.io/${{ github.repository }}
             tag: task-scheduler
+          - dockerfile: ./Dockerfiles/Dockerfile.geocml-postgres
+            image: ghcr.io/${{ github.repository }}
+            tag: postgres
     permissions:
       packages: write
 
