@@ -5,7 +5,7 @@ services:
     build: 
       context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-task-scheduler
-    image: ghcr.io/geocml/geocml-task-scheduler:latest
+    image: ghcr.io/geocml/geocml-base-deployment:task-scheduler
     hostname: geocml-task-scheduler
     networks:
       - geocml-network
@@ -17,7 +17,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-desktop
-    image: ghcr.io/geocml/geocml-desktop:latest
+    image: ghcr.io/geocml/geocml-base-deployment:desktop
     ports:
       - "5901:5901"
     environment:
@@ -38,7 +38,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-postgres
-    image: ghcr.io/geocml/geocml-postgres:latest
+    image: ghcr.io/geocml/geocml-base-deployment:postgres
     ports:
       - "5432:5432"
     hostname: geocml-postgres
@@ -48,7 +48,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-server
-    image: ghcr.io/geocml/geocml-server:latest
+    image: ghcr.io/geocml/geocml-base-deployment:server
     ports:
       - "80:80"
     volumes:
