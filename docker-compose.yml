@@ -19,7 +19,7 @@ services:
       dockerfile: ./Dockerfiles/Dockerfile.geocml-desktop
     image: ghcr.io/geocml/geocml-base-deployment:desktop
     ports:
-      - "5901:5901"
+      - "25901:25901"
     environment:
       VNC_PW: password
     shm_size: '512m'
