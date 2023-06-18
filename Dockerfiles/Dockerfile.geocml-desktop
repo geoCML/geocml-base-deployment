@@ -1,4 +1,4 @@
-FROM accetto/ubuntu-vnc-xfce-g3:latest
+FROM accetto/ubuntu-vnc-xfce-g3:23.03.2
 
 USER root
 COPY ./persistence-layer/ /home/headless/Persistence
