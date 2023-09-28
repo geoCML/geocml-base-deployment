@@ -1,4 +1,4 @@
-FROM accetto/ubuntu-vnc-xfce-g3:latest
+FROM accetto/ubuntu-vnc-xfce-g3:22.04
 
 USER root
 COPY ./persistence-layer/ /home/headless/Persistence
@@ -19,5 +19,8 @@ COPY ./build-resources/geocml-desktop/geocml-wallpaper.png /usr/share/background
 
 # Remove install cache
 RUN apt clean autoclean && apt autoremove -y && rm -rf /var/lib/{apt,dpkg,cache,log}/
+
+RUN chown -R headless:headless /home/headless
+RUN chown -R headless:headless /dockerstartup
 
 USER headless
