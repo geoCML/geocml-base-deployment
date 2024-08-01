@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:22.04
 
 RUN apt update
 
@@ -19,7 +19,7 @@ RUN apt install -y ansible
 
 # Install Ansible dependencies and run through playbook
 COPY ./ansible-playbooks/geocml-server-requirements.yaml ./ansible-playbooks/geocml-server-playbook.yaml ./
-RUN ansible-galaxy install -r geocml-server-requirements.yaml && ansible-playbook -i,localhost geocml-server-playbook.yaml --tags "all" && rm -f ./*.yaml
+RUN ansible-galaxy collection install ansible.posix && ansible-galaxy install -r geocml-server-requirements.yaml && ansible-playbook -i,localhost geocml-server-playbook.yaml --tags "all" && rm -f ./*.yaml
 
 # Copy portal source to container
 ADD ./build-resources/geocml-server/portal/ /var/www/html/

@@ -8,9 +8,9 @@
     - name: Enable cgid
       community.general.apache2_module:
         state: present
-        name: cgid 
+        name: cgid
         force: true
-    - name: Enable fcgid 
+    - name: Enable fcgid
       community.general.apache2_module:
         state: present
         name: fcgid
@@ -23,4 +23,3 @@
       ansible.builtin.command: mkdir -p /home/qgis/qgisserverdb
     - name: Change qgisserverdb dir's owner to www-data
       ansible.builtin.command: chown www-data:www-data /home/qgis/qgisserverdb
-...
