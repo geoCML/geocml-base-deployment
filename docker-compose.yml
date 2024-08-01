@@ -2,7 +2,7 @@
 version: "3.7"
 services:
   geocml-task-scheduler:
-    build: 
+    build:
       context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-task-scheduler
     image: ghcr.io/geocml/geocml-base-deployment:task-scheduler
@@ -14,6 +14,7 @@ services:
         source: ./persistence-layer/DBBackups
         target: /DBBackups
   geocml-desktop:
+    platform: linux/amd64
     build:
       context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-desktop
