@@ -173,4 +173,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-GEOCML_VERSION = '0.1.0'
+GEOCML_VERSION = '0.2.0'
