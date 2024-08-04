@@ -11,7 +11,7 @@ RUN apt install -y wget gnupg xvfb x11-xserver-utils python3-pip \
  && echo "deb [arch=amd64] https://xpra.org/ focal main" > /etc/apt/sources.list.d/xpra.list \
  && wget -q https://xpra.org/gpg.asc -O- | apt-key add - \
  && apt update \
- && apt install -y xpra
+ && apt install -y xpra --no-install-recommends --no-install-suggests
 
 # Install QGIS
 RUN apt install -y qgis
