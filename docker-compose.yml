@@ -14,24 +14,16 @@ services:
         source: ./persistence-layer/DBBackups
         target: /DBBackups
   geocml-desktop:
-    platform: linux/amd64
     build:
       context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-desktop
     image: ghcr.io/geocml/geocml-base-deployment:desktop
     ports:
-      - "5901:5901"
-    environment:
-      VNC_PW: password
-    shm_size: '512m'
-    stdin_open: true # docker run -i
-    tty: true        # docker run -t
+      - "10000:10000"
     volumes:
       - type: bind
         source: ./persistence-layer
-        target: /home/headless/Persistence
-    security_opt:
-      - seccomp=unconfined
+        target: /Persistence
     hostname: geocml-desktop
     networks:
       - geocml-network
