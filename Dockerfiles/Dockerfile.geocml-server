@@ -1,5 +1,7 @@
 FROM ubuntu:22.04
 
+USER root
+
 RUN apt update
 
 # Install QGIS Server
@@ -12,6 +14,7 @@ RUN apt install -y apache2 libapache2-mod-wsgi-py3 libapache2-mod-fcgid
 COPY ./build-resources/geocml-server/geocml.server.conf /etc/apache2/sites-available/geocml.server.conf
 
 # Enable geocml.server and Apache
+# TODO: this should be in the Ansible playbook
 RUN a2ensite geocml.server
 
 # Install Ansible

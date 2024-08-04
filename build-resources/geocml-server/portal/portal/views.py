@@ -11,23 +11,23 @@ def get_status(service):
     try:
         res = os.system('ping {} -c 2'.format(service))
         if res == 0:
-            return True 
+            return True
         else:
             return False
     except RuntimeError as e:
-        logger.warning(e) 
+        logger.warning(e)
         return False
 
 def get_vnc_connection_details_as_yaml(request):
     return """
-    url: {}:5901 
+    url: {}:5901
     """.format(request.get_host())
 
 def get_postgres_connection_details_as_yaml():
     return """
     host: geocml-postgres
     port: 5432
-    database: geocml_db 
+    database: geocml_db
     """
 
 def index(request):
