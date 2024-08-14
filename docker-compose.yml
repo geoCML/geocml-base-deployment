@@ -7,6 +7,8 @@ services:
       dockerfile: ./Dockerfiles/Dockerfile.geocml-task-scheduler
     image: ghcr.io/geocml/geocml-base-deployment:task-scheduler
     hostname: geocml-task-scheduler
+    environment:
+      - PATH=/geocml-task-scheduler/tabor/dist/tabor:$PATH
     networks:
       - geocml-network
     volumes:
@@ -55,4 +57,3 @@ networks:
   geocml-network:
     external: true
     driver: bridge
-...

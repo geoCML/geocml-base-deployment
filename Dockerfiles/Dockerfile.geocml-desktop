@@ -26,6 +26,9 @@ RUN ansible-galaxy collection install ansible.posix && ansible-galaxy install -r
 ######### Customize Container Here ###########
 ######### End Customizations ###########
 
+# Uninstall Ansible stuff
+RUN rm -rf $HOME/.ansible && apt purge -y ansible*
+
 # Remove install cache
 RUN apt clean autoclean && apt autoremove -y && rm -rf /var/lib/{apt,dpkg,cache,log}/
 

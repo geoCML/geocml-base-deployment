@@ -1,0 +1,34 @@
+---
+- # Configure geocml-task-scheduler
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: Create task_log file
+      ansible.builtin.command: touch /task_log
+    - name: Clone Tabor source
+      ansible.builtin.command:
+        chdir: /geocml-task-scheduler
+        cmd: git clone https://github.com/geoCML/tabor.git
+    - name: Update Tabor submodule to latest release tag
+      shell: |
+        cd /geocml-task-scheduler/tabor
+        git fetch --tags
+        TAG=$(git tag | tail -1)
+        #git checkout $TAG
+    - name: Create python venv for Tabor build
+      ansible.builtin.command:
+        chdir: /geocml-task-scheduler/tabor
+        cmd: python3.12 -m venv ./venv
+    - name: Install Tabor requirements
+      ansible.builtin.pip:
+        chdir: /geocml-task-scheduler/tabor
+        virtualenv: ./venv
+        requirements: ./requirements.txt
+    - name: Build Tabor
+      shell: |
+        cd /geocml-task-scheduler/tabor
+        source ./venv/bin/activate && python3.12 -m pip install -U pyinstaller==6.9.0 && pyinstaller --paths=./src -y ./src/tabor.py
+      args:
+        executable: /bin/bash
