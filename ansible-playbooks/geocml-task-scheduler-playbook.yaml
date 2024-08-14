@@ -16,7 +16,7 @@
         cd /geocml-task-scheduler/tabor
         git fetch --tags
         TAG=$(git tag | tail -1)
-        #git checkout $TAG
+        git checkout $TAG
     - name: Create python venv for Tabor build
       ansible.builtin.command:
         chdir: /geocml-task-scheduler/tabor
