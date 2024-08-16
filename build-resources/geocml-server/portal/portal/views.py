@@ -11,16 +11,23 @@ logger = logging.getLogger(__name__)
 def index(request: HttpRequest) -> HttpResponse:
     portal_config_yaml = yaml.safe_load(open(os.path.join('Persistence', 'portal-config.yaml')).read())
     template = loader.get_template('index.html')
+
+    geocml_desktop_port, geocml_desktop_status = get_status('geocml-desktop')
+    geocml_postgres_port, geocml_postgres_status = get_status('geocml-postgres')
+    geocml_server_port, geocml_server_status = get_status('geocml-server')
+
     context = {
         'version': GEOCML_VERSION,
         'hostname': request.get_host().split(':')[0],
         'name': portal_config_yaml['name'],
         'description': portal_config_yaml['description'],
         'copyright': portal_config_yaml['copyright'],
-        'geocml_desktop_status': get_status('geocml-desktop'),
-        'geocml_postgres_status': get_status('geocml-postgres'),
-        'geocml_server_status': get_status('geocml-server'),
-        'geocml_task_scheduler_status': True,
+        'geocml_desktop_status': geocml_desktop_status,
+        'geocml_desktop_port': geocml_desktop_port,
+        'geocml_postgres_status': geocml_postgres_status,
+        'geocml_postgres_port': geocml_postgres_port,
+        'geocml_server_status': geocml_server_status,
+        'geocml_server_port': geocml_server_port,
         'postgres_connection_details': get_postgres_connection_details_as_yaml()
     }
     return HttpResponse(template.render(context, request))

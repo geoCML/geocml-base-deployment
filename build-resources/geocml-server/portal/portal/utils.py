@@ -1,14 +1,14 @@
 import yaml
 import os
 
-def get_status(service: str) -> bool:
+def get_status(service: str) -> tuple[int, bool]:
     status_file_path = os.path.join(os.sep, "Persistence", "geocml-status.yml")
     try:
         status_file = open(status_file_path, "r")
         status_file_data = yaml.safe_load(status_file)
-        return status_file_data[service][1]
+        return (status_file_data[service][0], status_file_data[service][1])
     except FileNotFoundError:
-        return False
+        return (-1, False)
 
 def get_postgres_connection_details_as_yaml() -> str:
     return """

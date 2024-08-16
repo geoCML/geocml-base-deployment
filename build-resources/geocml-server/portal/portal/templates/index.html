@@ -188,7 +188,7 @@
                 <tbody>
                     <tr>
                         <td>geocml-desktop</td>
-                        <td>10000</td>
+                        <td>{{ geocml_desktop_port }}</td>
                         <td>
                             {% if geocml_desktop_status %}
                             <svg
@@ -217,7 +217,7 @@
                     </tr>
                     <tr>
                         <td>geocml-postgres</td>
-                        <td>5432</td>
+                        <td>{{ geocml_postgres_port }}</td>
                         <td>
                             {% if geocml_postgres_status %}
                             <svg
@@ -246,7 +246,7 @@
                     </tr>
                     <tr>
                         <td>geocml-server</td>
-                        <td>80</td>
+                        <td>{{ geocml_server_port }}</td>
                         <td>
                             {% if geocml_server_status %}
                             <svg
