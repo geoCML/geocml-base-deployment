@@ -2,6 +2,8 @@ import os
 import subprocess
 import yaml
 
+from task_logger import log
+
 def healthcheck_services():
     services = {
         "geocml-desktop": [10000, True],
@@ -15,6 +17,7 @@ def healthcheck_services():
         out = subprocess.run(["nmap", "-p", str(services[service][0]), service], capture_output=True)
 
         if out.stderr:
+            log(f"{service} is down!")
             services[service][1] = False
 
     status_file = open(path_to_status_file, "w")

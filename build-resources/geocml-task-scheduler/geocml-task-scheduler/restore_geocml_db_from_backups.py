@@ -4,7 +4,7 @@ import psycopg2
 import os
 import subprocess
 from time import time
-from task_logger import log
+from task_logger  import log
 
 def restore_geocml_db_from_backups():
     try:
