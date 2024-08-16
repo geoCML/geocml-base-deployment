@@ -17,7 +17,7 @@ def restore_geocml_db_from_backups():
         log("Couldn\'t connect to geocml_db; is the postgresql service started?")
         return
 
-    db_backups_dir = os.path.join(os.sep, "DBBackups")
+    db_backups_dir = os.path.join(os.sep, "Persistence", "DBBackups")
     now = time()
     delta = float("inf")
     most_recent_backup = ""

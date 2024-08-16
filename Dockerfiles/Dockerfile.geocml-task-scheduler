@@ -15,6 +15,9 @@ RUN apt install -y git python3.12-venv python3.12-dev
 # Install psycopg2-binary
 RUN pip3 install psycopg2-binary
 
+# Install nmap
+RUN apt install -y nmap
+
 # Install Ansible
 RUN apt install -y ansible
 
