@@ -19,7 +19,7 @@ def backup_geocml_db():
         return
 
     back_up_timestamp = time()
-    path_to_backup_dir = os.path.join(os.sep, "DBBackups", str(back_up_timestamp))
+    path_to_backup_dir = os.path.join(os.sep, "Persistence", "DBBackups", str(back_up_timestamp))
     os.mkdir(path_to_backup_dir)
     delete_backup_dir = True
 

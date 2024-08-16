@@ -33,9 +33,6 @@ RUN apt install -y python3 && apt install -y python3-pip && python3 -m pip insta
 # Install required Python libraries
 RUN python3 -m pip install -r /var/www/html/portal/requirements.txt
 
-# Install ping
-RUN apt install -y iputils-ping
-
 ######### Customize Container Here ###########
 ######### End Customizations ###########
 

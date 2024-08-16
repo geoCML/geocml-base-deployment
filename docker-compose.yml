@@ -13,8 +13,8 @@ services:
       - geocml-network
     volumes:
       - type: bind
-        source: ./persistence-layer/DBBackups
-        target: /DBBackups
+        source: ./persistence-layer
+        target: /Persistence
   geocml-desktop:
     build:
       context: .
