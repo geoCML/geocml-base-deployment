@@ -4,7 +4,7 @@ import logging
 from django.http import HttpResponse, HttpRequest
 from django.template import loader
 from portal.settings import GEOCML_VERSION
-from utils import get_status, get_postgres_connection_details_as_yaml
+from portal.utils import get_status, get_postgres_connection_details_as_yaml
 
 logger = logging.getLogger(__name__)
 

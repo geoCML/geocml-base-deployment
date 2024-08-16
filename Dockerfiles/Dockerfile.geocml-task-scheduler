@@ -12,9 +12,6 @@ RUN apt install -y python3.12 python3-pip
 # Install Ansible dependencies
 RUN apt install -y git python3.12-venv python3.12-dev
 
-# Install psycopg2-binary
-RUN pip3 install psycopg2-binary
-
 # Install nmap
 RUN apt install -y nmap
 
@@ -32,9 +29,12 @@ RUN ansible-galaxy collection install ansible.posix && ansible-galaxy install -r
 ######### End Customizations ###########
 
 # Uninstall Ansible stuff
-RUN rm -rf $HOME/.ansible && apt purge -y ansible* && apt purge -y git* && apt purge -y virtualenv*
+RUN rm -rf $HOME/.ansible && apt purge -y ansible* && apt purge -y git*
 
 # Remove install cache
 RUN apt clean autoclean && apt autoremove -y && rm -rf /var/lib/{apt,dpkg,cache,log}/
+
+# Install Python dependencies
+RUN pip3 install -r /geocml-task-scheduler/geocml-task-scheduler/requirements.txt
 
 CMD python3 /geocml-task-scheduler/geocml-task-scheduler/schedule.py

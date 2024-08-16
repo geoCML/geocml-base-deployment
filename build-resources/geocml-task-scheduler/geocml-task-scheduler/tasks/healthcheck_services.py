@@ -1,5 +1,6 @@
 import os
 import subprocess
+import yaml
 
 def healthcheck_services():
     services = {
@@ -8,7 +9,7 @@ def healthcheck_services():
         "geocml-postgres": [5432, True],
     }
 
-    path_to_status_file = os.path.join(os.sep, "Persistence", "geocml-status")
+    path_to_status_file = os.path.join(os.sep, "Persistence", "geocml-status.yml")
 
     for service in services:
         out = subprocess.run(["nmap", "-p", str(services[service][0]), service], capture_output=True)
@@ -17,4 +18,4 @@ def healthcheck_services():
             services[service][1] = False
 
     status_file = open(path_to_status_file, "w")
-    status_file.writelines(str(services))  # TODO: export as YAML
+    yaml.safe_dump(services, status_file)
