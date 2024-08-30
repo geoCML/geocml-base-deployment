@@ -5,6 +5,8 @@
   gather_facts: yes
   become: yes
   tasks:
+    - name: Enable geocml.server and Apache
+      ansible.builtin.command: a2ensite geocml.server
     - name: Enable cgid
       community.general.apache2_module:
         state: present
@@ -15,3 +17,11 @@
         state: present
         name: fcgid
         force: true
+    - name: Build geoCML Server Portal
+      ansible.builtin.command:
+        chdir: /portal/
+        cmd: npm run build
+    - name: Add IPs to known host list
+      shell: |
+        sh -c "echo 'geocml-server geocml.server' >> /etc/hosts"``.
+        sh -c "echo '127.0.0.1 geocml.server' >> /etc/hosts"``.

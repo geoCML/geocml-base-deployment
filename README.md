@@ -23,4 +23,4 @@ Once built, the image can be run locally using docker-compose.
 - **Starting the image locally:** Run `docker-compose up -d`
 - **Stopping the image locally:** Run `docker-compose down`
 
-When running locally, the geocml-desktop can be accessed via a VNC Viewer at localhost:10000
+When running locally, the geocml-desktop can be accessed via a VNC Viewer at localhost:10000 and geocml-server can be accessed via a web browser at localhost:80
