@@ -25,7 +25,6 @@ export const appSlice = createSlice({
 
     hideWebMap: (state) => {
       state.webMapVisible = false;
-      console.log("Web map hidden");
     },
 
     setWMSInfo: (state, action) => {
