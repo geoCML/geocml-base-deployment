@@ -10,8 +10,8 @@ ignore_schemas = ("pg_catalog", "information_schema")
 def backup_geocml_db():
     try:
         conn = psycopg2.connect(dbname="geocml_db",
-                                user="geocml",
-                                password="geocml",
+                                user="postgres",
+                                password="admin",
                                 host="geocml-postgres",
                                 port=5432)
     except psycopg2.OperationalError:
@@ -25,7 +25,7 @@ def backup_geocml_db():
 
     # Write table schemata to .tabor file
     out = subprocess.run(["tabor", "write", "--db", "geocml_db",
-                             "--username", "postgres", "--password", "admin",
+                             "--username", "geocml", "--password", "geocml",
                              "--host", "geocml-postgres",
                              "--file", os.path.join(path_to_backup_dir, "geocml_db.tabor")],
                              capture_output=True)
@@ -56,7 +56,7 @@ def backup_geocml_db():
 
             data_file_path = os.path.join(path_to_backup_dir, "data:{}.{}.csv".format(schema[0], table[2]))
             data_file = open(data_file_path, "w")
-            cursor.copy_expert(f"""COPY {schema[0]}."{table[2]}" TO STDOUT WITH (FORMAT csv, DELIMITER ',', HEADER);""", data_file)
+            cursor.copy_expert(f"""COPY {schema[0]}."{table[2]}" TO STDOUT WITH (FORMAT csv, DELIMITER ',', HEADER, NULL 'NULL');""", data_file)
             data_file.close()
 
     if delete_backup_dir: # nothing to back up

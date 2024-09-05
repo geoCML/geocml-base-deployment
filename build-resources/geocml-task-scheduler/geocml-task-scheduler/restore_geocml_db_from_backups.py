@@ -55,7 +55,7 @@ def restore_geocml_db_from_backups():
             file_name_split = file_name_split[1].split(".")
             data_file = open(os.path.join(db_backups_dir, most_recent_backup, csv_data_file), "r").readlines()
             cursor.copy_from(StringIO("".join(data_file[1::])), f"{file_name_split[1]}", sep=",",
-                             columns=tuple(data_file[0].replace("\n", "").split(",")))
+                             columns=tuple(data_file[0].replace("\n", "").split(",")), null="NULL")
             log("Finished loading data!")
 
     conn.commit()
