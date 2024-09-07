@@ -1,5 +1,6 @@
 import psycopg2
 import os
+import shutil
 import subprocess
 from time import time
 from task_logger import log
@@ -32,7 +33,7 @@ def backup_geocml_db():
 
     if out.stderr:
         log("Failed to generate .tabor file {}".format(out.stderr))
-        os.rmdir(path_to_backup_dir)
+        shutil.rmtree(path_to_backup_dir, ignore_errors=True)
         return
 
     cursor = conn.cursor()
