@@ -37,25 +37,15 @@ def restore_geocml_db_from_backups():
 
     log("Restoring geocml_db from {}".format(most_recent_backup))
 
-    cursor = conn.cursor()
-
     # Rebuild tables from .tabor file
 
-    out = subprocess.run(["tabor", "read", "--file", os.path.join(most_recent_backup, "geocml_db.tabor")],
-                         capture_output=True)
-
+    out = subprocess.run(["tabor", "load", "--file", os.path.join(most_recent_backup, "geocml_db.tabor"), "--db", "geocml_db", "--host", "geocml-postgres", "--username", "postgres", "--password", "admin"], capture_output=True)
     if out.stderr:
-        log("Failed to read .tabor file {}".format(out.stderr))
+        log("Failed to load tables from .tabor file")
+        return 0
 
-    psql_data = ast.literal_eval(out.stdout.decode())
-
-    for table, psql_queries in psql_data.items():
-        log("Restoring table: {}".format(table))
-        for _, value in psql_queries.items():
-            cursor.execute(value)
-
-    conn.commit() # commit schema changes to the database before loading data from the CSV
-    log("Tables restored!")
+    cursor = conn.cursor()
+    cursor.execute("SET session_replication_role = replica;")
 
     for csv_data_file in os.listdir(most_recent_backup): # load data from CSV backups
         file_name_split = csv_data_file.split(":")
@@ -65,10 +55,13 @@ def restore_geocml_db_from_backups():
             file_name_split = file_name_split[1].split(".")
             data_file = open(os.path.join(db_backups_dir, most_recent_backup, csv_data_file), "r").readlines()
             cursor.copy_from(StringIO("".join(data_file[1::])), f"{file_name_split[1]}", sep=",",
-                             columns=tuple(data_file[0].replace("\n", "").split(",")))
+                             columns=tuple(data_file[0].replace("\n", "").split(",")), null="NULL")
             log("Finished loading data!")
 
     conn.commit()
+
+    cursor.execute("SET session_replication_role = DEFAULT;")
+
     cursor.close()
     conn.close()
     return 0

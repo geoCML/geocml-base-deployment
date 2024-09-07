@@ -1,5 +1,6 @@
 import psycopg2
 import os
+import shutil
 import subprocess
 from time import time
 from task_logger import log
@@ -10,8 +11,8 @@ ignore_schemas = ("pg_catalog", "information_schema")
 def backup_geocml_db():
     try:
         conn = psycopg2.connect(dbname="geocml_db",
-                                user="geocml",
-                                password="geocml",
+                                user="postgres",
+                                password="admin",
                                 host="geocml-postgres",
                                 port=5432)
     except psycopg2.OperationalError:
@@ -25,14 +26,14 @@ def backup_geocml_db():
 
     # Write table schemata to .tabor file
     out = subprocess.run(["tabor", "write", "--db", "geocml_db",
-                             "--username", "postgres", "--password", "admin",
+                             "--username", "geocml", "--password", "geocml",
                              "--host", "geocml-postgres",
                              "--file", os.path.join(path_to_backup_dir, "geocml_db.tabor")],
                              capture_output=True)
 
     if out.stderr:
         log("Failed to generate .tabor file {}".format(out.stderr))
-        os.rmdir(path_to_backup_dir)
+        shutil.rmtree(path_to_backup_dir, ignore_errors=True)
         return
 
     cursor = conn.cursor()
@@ -56,7 +57,7 @@ def backup_geocml_db():
 
             data_file_path = os.path.join(path_to_backup_dir, "data:{}.{}.csv".format(schema[0], table[2]))
             data_file = open(data_file_path, "w")
-            cursor.copy_expert(f"""COPY {schema[0]}."{table[2]}" TO STDOUT WITH (FORMAT csv, DELIMITER ',', HEADER);""", data_file)
+            cursor.copy_expert(f"""COPY {schema[0]}."{table[2]}" TO STDOUT WITH (FORMAT csv, DELIMITER ',', HEADER, NULL 'NULL');""", data_file)
             data_file.close()
 
     if delete_backup_dir: # nothing to back up
