@@ -8,7 +8,10 @@ services:
     image: ghcr.io/geocml/geocml-base-deployment:task-scheduler
     hostname: geocml-task-scheduler
     environment:
-      - PATH=/geocml-task-scheduler/tabor/dist/tabor:$PATH
+      PATH: /geocml-task-scheduler/tabor/dist/tabor:$PATH
+      DRGON_API_KEY: ${DRGON_API_KEY}
+      DRGON_HOST: ${DRGON_HOST}
+      GEOCML_DEPLOYMENT_HOST: ${GEOCML_DEPLOYMENT_HOST}
     networks:
       - geocml-network
     volumes:
