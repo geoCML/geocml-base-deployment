@@ -11,6 +11,7 @@ services:
       PATH: /geocml-task-scheduler/tabor/dist/tabor:$PATH
       DRGON_API_KEY: ${DRGON_API_KEY}
       DRGON_HOST: ${DRGON_HOST}
+      GEOCML_DEPLOYMENT_HOST: ${GEOCML_DEPLOYMENT_HOST}
     networks:
       - geocml-network
     volumes:

@@ -6,8 +6,9 @@ import requests
 def register_with_drgon():
     host = os.environ["DRGON_HOST"]
     api_key = os.environ["DRGON_API_KEY"]
+    deployment_host = os.environ["GEOCML_DEPLOYMENT_HOST"]
 
-    if host == "" or api_key == "":
+    if host == "" or api_key == "" or deployment_host == "":
         log("Host or API key not found, can't register this deployment with DRGON.")
         return 0
 
@@ -15,7 +16,6 @@ def register_with_drgon():
     xml = bs.BeautifulSoup(res.text, "html.parser")
     abstract = xml.find("ows:abstract", text=lambda text: isinstance(text, bs.CData)).string.strip()
     title = xml.find("ows:title").text
-    url = "https://google.com"  # TODO: make this dynamic
     owner = xml.find("ows:individualname").text
     keywords = xml.find("ows:keywords").find_all("ows:keyword")
     tags = ""
@@ -26,7 +26,7 @@ def register_with_drgon():
     res = requests.post(f"{host}/registry", json={
         "title": title,
         "description": abstract,
-        "url": url,
+        "url": deployment_host,
         "owner": owner,
         "tags": tags,
         "key": api_key
