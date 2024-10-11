@@ -31,4 +31,4 @@ RUN rm -rf $HOME/.ansible && apt purge -y ansible*
 RUN apt clean autoclean && apt autoremove -y && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 USER user
-CMD ["xpra", "start", ":100", "--start-child=/usr/bin/qgis /Persistence/geocml-project.qgz", "--bind-tcp=0.0.0.0:10000", "--no-daemon", "--no-notifications", "--no-mdns", "--no-pulseaudio", "--exit-with-children"]
+CMD ["xpra", "start", ":100", "--start-child=/usr/bin/qgis /Persistence/geocml-project.qgz", "--bind-tcp=0.0.0.0:10000", "--auth=password,value=$GEOCML_DESKTOP_PASSWORD", "--no-daemon", "--no-notifications", "--no-mdns", "--no-pulseaudio", "--exit-with-children"]

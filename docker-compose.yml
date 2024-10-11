@@ -30,6 +30,8 @@ services:
         source: ./persistence-layer
         target: /Persistence
     hostname: geocml-desktop
+    environment:
+      GEOCML_DESKTOP_PASSWORD: ${GEOCML_DESKTOP_PASSWORD}
     networks:
       - geocml-network
   geocml-postgres:
