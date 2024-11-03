@@ -5,7 +5,7 @@ import subprocess
 from time import time
 from task_logger import log
 
-ignore_tables = ("spatial_ref_sys", "geometry_columns", "geography_columns")  # TODO: https://github.com/geoCML/tabor/issues/7
+ignore_tables = ("spatial_ref_sys", "geometry_columns", "geography_columns", "raster_columns")  # TODO: https://github.com/geoCML/tabor/issues/7
 ignore_schemas = ("pg_catalog", "information_schema")
 
 def backup_geocml_db():

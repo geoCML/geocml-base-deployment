@@ -67,6 +67,11 @@
       community.postgresql.postgresql_ext:
         db: geocml_db
         name: postgis
+    - name: Enable postgis_raster extension
+      become_user: postgres
+      community.postgresql.postgresql_ext:
+        db: geocml_db
+        name: postgis_raster
     - name: Restart PostgreSQL service
       service:
         enabled: yes
