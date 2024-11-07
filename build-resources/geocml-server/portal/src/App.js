@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { collectInfoFromWMS } from "./utils/wms.util";
 import { HostedLayers } from "./components/HostedLayers";
 import { reportInvalidWMS, showWebMap } from "./app-slice";
+import { Recommendations } from "./components/Recommendations";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -145,7 +146,8 @@ export default function App() {
               </p>
             </div>
           </div>
-        </div>
+		  <Recommendations/>
+		</div>
       );
     } catch (err) {
       console.log(err);
