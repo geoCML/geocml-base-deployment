@@ -8,6 +8,7 @@ export const appSlice = createSlice({
     wmsInfoValid: true,
     webMapVisible: false,
     layers: [],
+	recommendations: []
   },
 
   reducers: {
@@ -43,6 +44,10 @@ export const appSlice = createSlice({
       state.layers = action.payload;
     },
 
+	setRecommendations: (state, action) => {
+		state.recommendations = action.payload
+	},
+
     toggleLayer: (state, action) => {
       for (const layer of state.layers) {
         if (layer.name === action.payload) layer.visible = !layer.visible;
@@ -58,6 +63,7 @@ export const {
   reportInvalidWMS,
   reportValidWMS,
   setLayers,
+  setRecommendations,
   showWebMap,
   hideWebMap,
   toggleLayer,
