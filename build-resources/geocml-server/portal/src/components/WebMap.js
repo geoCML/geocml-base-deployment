@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { LayersPane } from "./LayersPane";
+import { Legend } from "./Legend";
 import { hideWebMap } from "../app-slice";
 
 const L = require("leaflet");
@@ -67,7 +68,8 @@ export function WebMap() {
         </div>
 
         <LayersPane />
-      </div>
+		<Legend />
+	</div>
     );
   }
 }
