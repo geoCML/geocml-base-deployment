@@ -17,7 +17,7 @@ export function Legend() {
     >
 	  <img src={`/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERTITLE=true&RULELABEL=true&LAYERS=${layers.map((layer) => {
 		  return layer.name
-	  }).join(",")}`} alt="Legend"/>
+	  }).reverse().join(",")}`} alt="Legend"/>
     </div>
   );
 }
