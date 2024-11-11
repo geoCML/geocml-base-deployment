@@ -31,46 +31,50 @@ export function Recommendations() {
 	}, [])
 
 	return (
-		<div>
-			<h3 className="row justify-content-center pt-5">Explore Similar Datasets</h3>
-			<i className="row justify-content-center pb-2">Results powered by DRGON</i>
-			<table id="drgon-recommendations" className="table table-responsive" style={{ width: "100%" }}>
-				<thead>
-					<tr>
-						<th>Title</th>
-						<th>Description</th>
-						<th>Owner</th>
-						<th>URL</th>
-						<th>Tags</th>
-					</tr>
-				</thead>
-				<tbody>
-					{recommendations.map((recommendation, i) => {
-						return (
-							<tr>
-								<td>
-									{recommendation[i].title}
-								</td>
-								<td>
-									{recommendation[i].description}
-								</td>
-								<td>
-									{recommendation[i].owner}
-								</td>
-								<td>
-									<a href={recommendation[i].url}>{recommendation[i].url}</a>
-								</td>
-							<td>{recommendation[i].tags.split(",").map((tag) => {
-								return (
-									<span className="rounded bg-info p-2 mx-2">{tag}</span>
-								)
-							})}</td>
-							</tr>
-						)
-					})}
-				</tbody>
-			</table>
-		</div>
+		recommendations.length > 0 ? (
+			<div>
+				<h3 className="row justify-content-center pt-5">Explore Similar Datasets</h3>
+				<i className="row justify-content-center pb-2">Results powered by DRGON</i>
+				<table id="drgon-recommendations" className="table table-responsive" style={{ width: "100%" }}>
+					<thead>
+						<tr>
+							<th>Title</th>
+							<th>Description</th>
+							<th>Owner</th>
+							<th>URL</th>
+							<th>Tags</th>
+						</tr>
+					</thead>
+					<tbody>
+						{ recommendations.map((recommendation, i) => {
+							return (
+								<tr>
+									<td>
+										{recommendation[i].title}
+									</td>
+									<td>
+										{recommendation[i].description}
+									</td>
+									<td>
+										{recommendation[i].owner}
+									</td>
+									<td>
+										<a href={recommendation[i].url}>{recommendation[i].url}</a>
+									</td>
+								<td>{recommendation[i].tags.split(",").map((tag) => {
+									return (
+										<span className="rounded bg-info p-2 mx-2">{tag}</span>
+									)
+								})}</td>
+								</tr>
+							)
+						}) }
+					</tbody>
+				</table>
+			</div>
+		) : (
+			<div></div>
+		)
 	)
 }
 
