@@ -4,3 +4,4 @@ persistence-layer/*
 !persistence-layer/portal-config.yaml
 !persistence-layer/DBBackups
 **/__pycache__/**
+.env
