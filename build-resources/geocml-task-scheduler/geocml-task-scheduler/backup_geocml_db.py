@@ -12,7 +12,7 @@ def backup_geocml_db():
     try:
         conn = psycopg2.connect(dbname="geocml_db",
                                 user="postgres",
-                                password="admin",
+                                password=os.environ["GEOCML_POSTGRES_ADMIN_PASSWORD"],
                                 host="geocml-postgres",
                                 port=5432)
     except psycopg2.OperationalError:
@@ -26,7 +26,7 @@ def backup_geocml_db():
 
     # Write table schemata to .tabor file
     out = subprocess.run(["tabor", "write", "--db", "geocml_db",
-                             "--username", "geocml", "--password", "geocml",
+                             "--username", "geocml", "--password", os.environ["GEOCML_POSTGRES_PASSWORD"],
                              "--host", "geocml-postgres",
                              "--file", os.path.join(path_to_backup_dir, "geocml_db.tabor")],
                              capture_output=True)

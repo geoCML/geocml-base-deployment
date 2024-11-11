@@ -10,7 +10,7 @@ def restore_geocml_db_from_backups():
     try:
         conn = psycopg2.connect(dbname="geocml_db",
                                 user="postgres",
-                                password="admin",
+                                password=os.environ["GEOCML_POSTGRES_ADMIN_PASSWORD"],
                                 host="geocml-postgres",
                                 port=5432)
     except psycopg2.OperationalError:
@@ -39,7 +39,7 @@ def restore_geocml_db_from_backups():
 
     # Rebuild tables from .tabor file
 
-    out = subprocess.run(["tabor", "load", "--file", os.path.join(most_recent_backup, "geocml_db.tabor"), "--db", "geocml_db", "--host", "geocml-postgres", "--username", "postgres", "--password", "admin"], capture_output=True)
+    out = subprocess.run(["tabor", "load", "--file", os.path.join(most_recent_backup, "geocml_db.tabor"), "--db", "geocml_db", "--host", "geocml-postgres", "--username", "postgres", "--password", os.environ["GEOCML_POSTGRES_ADMIN_PASSWORD"]], capture_output=True)
     if out.stderr:
         log("Failed to load tables from .tabor file")
         return 0
