@@ -46,22 +46,22 @@ export function Recommendations() {
 						</tr>
 					</thead>
 					<tbody>
-						{ recommendations.map((recommendation, i) => {
+						{ recommendations.map((recommendation) => {
 							return (
 								<tr>
 									<td>
-										{recommendation[i].title}
+										{recommendation[0].title}
 									</td>
 									<td>
-										{recommendation[i].description}
+										{recommendation[0].description}
 									</td>
 									<td>
-										{recommendation[i].owner}
+										{recommendation[0].owner}
 									</td>
 									<td>
-										<a href={recommendation[i].url}>{recommendation[i].url}</a>
+										<a href={recommendation[0].url}>{recommendation[0].url}</a>
 									</td>
-								<td>{recommendation[i].tags.split(",").map((tag) => {
+								<td>{recommendation[0].tags.split(",").map((tag) => {
 									return (
 										<span className="rounded bg-info p-2 mx-2">{tag}</span>
 									)
