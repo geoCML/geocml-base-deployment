@@ -11,7 +11,7 @@ export function collectRecommendations(dispatch, wmsInfo) {
 		}
 	}
 
-	axios.get(`${process.env.REACT_APP_DRGON_HOST}/recommendations`, { // TODO: https://github.com/geoCML/geocml-base-deployment/issues/76
+	axios.get(`${process.env.REACT_APP_DRGON_HOST}/recommendations`, {
 		params: {
 			"tags": tags.join(","),
 			"limit": 10
