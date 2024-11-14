@@ -1,6 +1,7 @@
 FROM ubuntu:22.04
-
 USER root
+
+ARG DRGON_HOST=""
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update
 
@@ -24,6 +25,9 @@ ADD ./build-resources/geocml-server/portal/ /portal/
 
 # Install Node dependencies
 RUN cd /portal/ && npm i
+
+# Add DRGON_HOST to NodeJS .env file
+RUN echo REACT_APP_DRGON_HOST=$DRGON_HOST >> /portal/.env
 
 # Install Ansible dependencies and run through playbook
 COPY ./ansible-playbooks/geocml-server-requirements.yaml ./ansible-playbooks/geocml-server-playbook.yaml ./
