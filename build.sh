@@ -8,7 +8,7 @@ if [[ $DOCKER_INSTALLED -ne 0 ]]; then
 	exit 1
 fi
 
-docker compose build --build-arg GEOCML_POSTGRES_PASSWORD --build-arg GEOCML_POSTGRES_ADMIN_PASSWORD
+docker compose build --build-arg GEOCML_POSTGRES_PASSWORD --build-arg GEOCML_POSTGRES_ADMIN_PASSWORD --build-arg DRGON_HOST
 
 echo "Done! You can start your geoCML instance by running the 'start.sh' script."
 exit 0
