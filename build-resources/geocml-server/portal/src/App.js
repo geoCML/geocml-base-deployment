@@ -6,15 +6,18 @@ import { collectInfoFromWMS } from "./utils/wms.util";
 import { HostedLayers } from "./components/HostedLayers";
 import { reportInvalidWMS, showWebMap } from "./app-slice";
 import { Recommendations } from "./components/Recommendations";
+import { setIsMobile } from "./app-slice";
 
 export default function App() {
   const dispatch = useDispatch();
   const wmsInfo = useSelector((state) => state.app.wmsInfo);
   const wmsInfoValid = useSelector((state) => state.app.wmsInfoValid);
   const layers = useSelector((state) => state.app.layers);
+  const isMobile = useSelector((state) => state.app.isMobile);
 
   useEffect(() => {
     collectInfoFromWMS(dispatch);
+    if (window.innerWidth <= 768) dispatch(setIsMobile())
   }, []);
 
   if (wmsInfoValid) {
@@ -141,13 +144,13 @@ export default function App() {
                 alt="Map Preview"
                 className="w-100"
               />
-              <p className="pt-3" id="description">
+              <p className="pt-3 w-100 text-break" id="description">
                 {wmsInfo.WMS_Capabilities.Service.Abstract}
               </p>
             </div>
           </div>
-		  <Recommendations/>
-		</div>
+          <Recommendations/>
+        </div>
       );
     } catch (err) {
       console.log(err);
@@ -169,6 +172,7 @@ export default function App() {
             Deployment because of an invalid WMS configuration.
           </p>
         </div>
+        { !isMobile ? (
         <div className="row">
           <p className="py-4 text-center">
             Follow these instructions to configure geoCML Server Portal:
@@ -231,6 +235,9 @@ export default function App() {
             <li>Click OK.</li>
           </ol>
         </div>
+        ) : (
+        <div></div>
+        ) }
       </div>
     );
   }

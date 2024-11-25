@@ -10,10 +10,10 @@ export function LayersPane() {
       id="layers-pane"
       className="position-absolute bg-light rounded p-2 overflow-auto"
       style={{
-        bottom: 0,
+        bottom: 70,
         zIndex: 99,
-        maxHeight: "40%",
-        maxWidth: "20%",
+        maxHeight: "43%",
+        maxWidth: "50%",
       }}
     >
       {layers.map((layer) => {
