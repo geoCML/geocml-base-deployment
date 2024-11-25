@@ -7,8 +7,11 @@ export const appSlice = createSlice({
     wmsInfo: {},
     wmsInfoValid: true,
     webMapVisible: false,
+    layersPaneVisible: false,
+    legendVisible: false,
+    isMobile: false,
     layers: [],
-	recommendations: []
+    recommendations: []
   },
 
   reducers: {
@@ -44,15 +47,27 @@ export const appSlice = createSlice({
       state.layers = action.payload;
     },
 
-	setRecommendations: (state, action) => {
-		state.recommendations = action.payload
-	},
+    setRecommendations: (state, action) => {
+        state.recommendations = action.payload;
+    },
+
+    toggleLayersPane: (state) => {
+        state.layersPaneVisible = !state.layersPaneVisible;
+    },
+
+    toggleLegend: (state) => {
+        state.legendVisible = !state.legendVisible;
+    },
 
     toggleLayer: (state, action) => {
       for (const layer of state.layers) {
         if (layer.name === action.payload) layer.visible = !layer.visible;
       }
     },
+
+    setIsMobile: (state) => {
+        state.isMobile = true;
+    }
   },
 });
 
@@ -67,6 +82,9 @@ export const {
   showWebMap,
   hideWebMap,
   toggleLayer,
+  toggleLayersPane,
+  toggleLegend,
+  setIsMobile
 } = appSlice.actions;
 
 export default appSlice.reducer;

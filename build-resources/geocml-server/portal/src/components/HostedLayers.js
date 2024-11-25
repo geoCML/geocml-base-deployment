@@ -9,7 +9,7 @@ export function HostedLayers() {
     return (
       <div className="px-2 py-5">
         <h3 className="row justify-content-center">Hosted Layers</h3>
-        <table className="table table-responsive py-2">
+        <table className="table py-2">
           <thead>
             <tr>
               <th>Layer Name</th>
@@ -26,7 +26,7 @@ export function HostedLayers() {
                       type="button"
                       className="btn btn-light border"
                       style={{
-                        width: "225px",
+                        width: "100%",
                       }}
                       href={`/cgi-bin/qgis_mapserv.fcgi?SERVICE=WFS&VERSION=1.3.0&REQUEST=GetFeature&TYPENAME=${layer.name}`}
                     >
