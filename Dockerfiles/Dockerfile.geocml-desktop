@@ -17,6 +17,12 @@ RUN apt install -y qgis
 # Install Ansible
 RUN apt install -y ansible
 
+# Copy xpra web client files to container
+COPY ../build-resources/geocml-desktop/connect.html /usr/share/xpra/www/connect.html
+COPY ../build-resources/geocml-desktop/connect.css /usr/share/xpra/www/css/connect.css
+COPY ../build-resources/geocml-desktop/geocml-desktop-logo.png /usr/share/xpra/www/icons/geocml-desktop-logo.png
+COPY ../build-resources/geocml-desktop/html5-backgrounds/* /usr/share/xpra/www/
+
 # Install Ansible dependencies and run through playbook
 COPY ./ansible-playbooks/geocml-desktop-requirements.yaml ./ansible-playbooks/geocml-desktop-playbook.yaml ./
 RUN ansible-galaxy collection install ansible.posix && ansible-galaxy install -r geocml-desktop-requirements.yaml && ansible-playbook -i,localhost geocml-desktop-playbook.yaml --tags "all" && rm -f ./*.yaml
