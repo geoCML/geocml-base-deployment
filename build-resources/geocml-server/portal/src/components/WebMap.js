@@ -9,7 +9,8 @@ const L = require("leaflet");
 export function WebMap() {
   const dispatch = useDispatch();
   const map = useRef(undefined);
-  const layers = useSelector((state) => state.app.layers);
+  const wfsLayers = useSelector((state) => state.app.wfsLayers);
+  const wcsLayers = useSelector((state) => state.app.wcsLayers);
   const webMapVisible = useSelector((state) => state.app.webMapVisible);
   const layersPaneVisible = useSelector((state) => state.app.layersPaneVisible)
   const legendVisible = useSelector((state) => state.app.legendVisible)
@@ -27,7 +28,8 @@ export function WebMap() {
       });
 
       const wmsTileLayer = L.tileLayer.wms("/cgi-bin/qgis_mapserv.fcgi", {
-        layers: layers
+        layers: wfsLayers
+          .concat(wcsLayers)
           .filter((layer) => layer.visible)
           .reverse()
           .map((layer) => layer.name)
@@ -39,7 +41,7 @@ export function WebMap() {
 
       wmsTileLayer.addTo(map.current);
     }
-  }, [webMapVisible, layers]);
+  }, [webMapVisible, wfsLayers, wcsLayers]);
 
   if (webMapVisible === true) {
     return (

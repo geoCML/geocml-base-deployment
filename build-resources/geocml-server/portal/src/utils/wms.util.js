@@ -5,16 +5,8 @@ import {
   loading,
   reportInvalidWMS,
   reportValidWMS,
-  setLayers,
   setWMSInfo,
 } from "../app-slice";
-
-function Layer(name) {
-  return {
-    name: name,
-    visible: true,
-  };
-}
 
 export function collectInfoFromWMS(dispatch) {
   const xmlParser = new XMLParser();
@@ -27,7 +19,6 @@ export function collectInfoFromWMS(dispatch) {
     )
     .then((res) => {
       dispatch(setWMSInfo(xmlParser.parse(res.data)));
-      dispatch(setLayers(getLayersFromWMSInfo(xmlParser.parse(res.data))));
       dispatch(reportValidWMS());
     })
     .catch((err) => {
@@ -36,17 +27,4 @@ export function collectInfoFromWMS(dispatch) {
     .finally(() => {
       dispatch(loaded());
     });
-}
-
-export function getLayersFromWMSInfo(wmsInfo) {
-  const layers = [];
-  const layersFromWMS = wmsInfo.WMS_Capabilities.Capability.Layer;
-  if (layersFromWMS.Layer.length) {
-    layersFromWMS.Layer.map((layer) => {
-      layers.push(Layer(layer.Name));
-    });
-  } else {
-    layers.push(Layer(layersFromWMS.Layer.Name));
-  }
-  return layers;
 }

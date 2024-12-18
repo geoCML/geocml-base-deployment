@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 
 export function Legend() {
-  const layers = useSelector((state) => state.app.layers);
+  const wfsLayers = useSelector((state) => state.app.wfsLayers);
 
   return (
     <div
@@ -15,7 +15,7 @@ export function Legend() {
         maxWidth: "30%",
       }}
     >
-      <img className="w-100" src={`/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERTITLE=true&RULELABEL=true&LAYERS=${layers.map((layer) => {
+      <img className="w-100" src={`/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERTITLE=true&RULELABEL=true&LAYERS=${wfsLayers.map((layer) => {
           return layer.name
       }).reverse().join(",")}`} alt="Legend"/>
     </div>
