@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { collectInfoFromWMS } from "./utils/wms.util";
+import { collectInfoFromWFS } from "./utils/wfs.util";
+import { collectInfoFromWCS } from "./utils/wcs.util";
 import { HostedLayers } from "./components/HostedLayers";
 import { reportInvalidWMS, showWebMap } from "./app-slice";
 import { Recommendations } from "./components/Recommendations";
@@ -12,11 +14,14 @@ export default function App() {
   const dispatch = useDispatch();
   const wmsInfo = useSelector((state) => state.app.wmsInfo);
   const wmsInfoValid = useSelector((state) => state.app.wmsInfoValid);
-  const layers = useSelector((state) => state.app.layers);
+  const wfsLayers = useSelector((state) => state.app.wfsLayers);
+  const wcsLayers = useSelector((state) => state.app.wcsLayers);
   const isMobile = useSelector((state) => state.app.isMobile);
 
   useEffect(() => {
     collectInfoFromWMS(dispatch);
+    collectInfoFromWFS(dispatch);
+    collectInfoFromWCS(dispatch);
     if (window.innerWidth <= 768) dispatch(setIsMobile())
   }, []);
 
@@ -137,7 +142,8 @@ export default function App() {
             <div className="p-4 col border">
               <h3>About this deployment...</h3>
               <img
-                src={`/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX=-90,-180,90,180&WIDTH=1920&HEIGHT=1080&SRS=epsg:4326&LAYERS=${layers
+                src={`/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX=-90,-180,90,180&WIDTH=1920&HEIGHT=1080&SRS=epsg:4326&LAYERS=${wfsLayers
+                  .concat(wcsLayers)
                   .map((layer) => layer.name)
                   .reverse()
                   .join(",")}`}

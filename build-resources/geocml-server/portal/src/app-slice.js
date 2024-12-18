@@ -5,12 +5,15 @@ export const appSlice = createSlice({
   initialState: {
     loading: true,
     wmsInfo: {},
+    wfsInfo: {},
+    wcsInfo: {},
     wmsInfoValid: true,
     webMapVisible: false,
     layersPaneVisible: false,
     legendVisible: false,
     isMobile: false,
-    layers: [],
+    wfsLayers: [],
+    wcsLayers: [],
     recommendations: []
   },
 
@@ -35,6 +38,14 @@ export const appSlice = createSlice({
       state.wmsInfo = action.payload;
     },
 
+    setWFSInfo: (state, action) => {
+      state.wfsInfo = action.payload;
+    },
+
+    setWCSInfo: (state, action) => {
+      state.wcsInfo = action.payload;
+    },
+
     reportInvalidWMS: (state) => {
       state.wmsInfoValid = false;
     },
@@ -43,8 +54,12 @@ export const appSlice = createSlice({
       state.wmsInfoValid = true;
     },
 
-    setLayers: (state, action) => {
-      state.layers = action.payload;
+    setWFSLayers: (state, action) => {
+      state.wfsLayers = action.payload;
+    },
+
+    setWCSLayers: (state, action) => {
+      state.wcsLayers = action.payload;
     },
 
     setRecommendations: (state, action) => {
@@ -60,7 +75,7 @@ export const appSlice = createSlice({
     },
 
     toggleLayer: (state, action) => {
-      for (const layer of state.layers) {
+      for (const layer of state.wfsLayers.concat(state.wcsLayers)) {
         if (layer.name === action.payload) layer.visible = !layer.visible;
       }
     },
@@ -75,9 +90,12 @@ export const {
   loading,
   loaded,
   setWMSInfo,
+  setWFSInfo,
+  setWCSInfo,
   reportInvalidWMS,
   reportValidWMS,
-  setLayers,
+  setWFSLayers,
+  setWCSLayers,
   setRecommendations,
   showWebMap,
   hideWebMap,

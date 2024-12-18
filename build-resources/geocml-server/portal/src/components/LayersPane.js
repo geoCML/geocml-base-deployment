@@ -3,7 +3,8 @@ import { toggleLayer } from "../app-slice";
 
 export function LayersPane() {
   const dispatch = useDispatch();
-  const layers = useSelector((state) => state.app.layers);
+  const wfsLayers = useSelector((state) => state.app.wfsLayers);
+  const wcsLayers = useSelector((state) => state.app.wcsLayers);
 
   return (
     <div
@@ -16,7 +17,7 @@ export function LayersPane() {
         maxWidth: "50%",
       }}
     >
-      {layers.map((layer) => {
+      {wfsLayers.concat(wcsLayers).map((layer) => {
         return (
           <div className="pl-5 form-check">
             <input
