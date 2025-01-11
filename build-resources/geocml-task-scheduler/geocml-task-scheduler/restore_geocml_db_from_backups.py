@@ -12,7 +12,7 @@ def restore_geocml_db_from_backups():
                                 user="postgres",
                                 password=os.environ["GEOCML_POSTGRES_ADMIN_PASSWORD"],
                                 host="geocml-postgres",
-                                port=5432)
+                                port=5434)
     except psycopg2.OperationalError:
         log("Couldn\'t connect to geocml_db; is the postgresql service started?")
         return
@@ -39,7 +39,7 @@ def restore_geocml_db_from_backups():
 
     # Rebuild tables from .tabor file
 
-    out = subprocess.run(["tabor", "load", "--file", os.path.join(most_recent_backup, "geocml_db.tabor"), "--db", "geocml_db", "--host", "geocml-postgres", "--username", "postgres", "--password", os.environ["GEOCML_POSTGRES_ADMIN_PASSWORD"]], capture_output=True)
+    out = subprocess.run(["tabor", "load", "--file", os.path.join(most_recent_backup, "geocml_db.tabor"), "--db", "geocml_db", "--host", "geocml-postgres", "--port", "5434", "--username", "postgres", "--password", os.environ["GEOCML_POSTGRES_ADMIN_PASSWORD"]], capture_output=True)
     if out.stderr:
         log("Failed to load tables from .tabor file")
         return 0
@@ -57,6 +57,14 @@ def restore_geocml_db_from_backups():
             cursor.copy_from(StringIO("".join(data_file[1::])), f"{file_name_split[1]}", sep=",",
                              columns=tuple(data_file[0].replace("\n", "").split(",")), null="NULL")
             log("Finished loading data!")
+
+    # load raster data
+    os.environ["PGPASSWORD"] = os.environ["GEOCML_POSTGRES_ADMIN_PASSWORD"]
+    out = subprocess.run(f"raster2pgsql -I -C -M {os.path.join(most_recent_backup, 'rasters', '*.png')} -F public.raster_data | psql -U postgres -d geocml_db -h geocml-postgres -p 5434", capture_output=True, shell=True)
+    os.environ["PGPASSWORD"] = ""
+
+    if out.stderr:
+        log(f"Failed to load raster data: {out.stderr}")
 
     conn.commit()
 
