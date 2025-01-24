@@ -7,11 +7,33 @@ import {
   setWFSInfo,
 } from "../app-slice";
 
-function WFSLayer(name) {
+export async function WFSLayer(name) {
+  const features = await getFeaturesFromLayer(name)
   return {
     name: name,
     visible: true,
-  };
+    features
+  }
+}
+
+async function getFeaturesFromLayer(layerName) {
+    return await axios
+        .get(`/cgi-bin/qgis_mapserv.fcgi?SERVICE=WFS&VERSION=1.3.0&REQUEST=GetFeature&TYPENAME=${layerName}&OUTPUTFORMAT=geojson`)
+        .then((res) => {
+            const features = [];
+
+            res.data.features.forEach((feature) => {
+                features.push({
+                    id: feature.id,
+                    properties: feature.properties
+                })
+            })
+
+            return features;
+        })
+        .catch((err) => {
+            console.error("ERROR: ", err.message);
+        })
 }
 
 export function collectInfoFromWFS(dispatch) {
@@ -22,30 +44,37 @@ export function collectInfoFromWFS(dispatch) {
     .get(
       "/cgi-bin/qgis_mapserv.fcgi?SERVICE=WFS&VERSION=1.3.0&REQUEST=GetCapabilities",
     )
-    .then((res) => {
+    .then(async (res) => {
       dispatch(setWFSInfo(xmlParser.parse(res.data)));
-      dispatch(setWFSLayers(getLayersFromWFSInfo(xmlParser.parse(res.data))));
+      dispatch(setWFSLayers(await getLayersFromWFSInfo(xmlParser.parse(res.data))));
     })
     .catch((err) => {
-      console.log(err);
+      console.error("ERROR: ", err.message);
     })
     .finally(() => {
       dispatch(loaded());
     });
 }
 
-export function getLayersFromWFSInfo(wfsInfo) {
-  const layers = [];
+export async function getLayersFromWFSInfo(wfsInfo) { 
+  if (localStorage.getItem("wfsLayers"))
+    return JSON.parse(localStorage.getItem("wfsLayers"));
+
+  let layers = [];
   const layersFromWFS = wfsInfo.WFS_Capabilities.FeatureTypeList;
+
   for (const [key, val] of Object.entries(layersFromWFS)) {
     if (key === "FeatureType")
       if (val.length) {
-        val.map((layer) => {
-          layers.push(WFSLayer(layer.Name));
-        })
+          layers = await Promise.all(val.map(async (layer) => await WFSLayer(layer.Name)))
       } else {
-        layers.push(WFSLayer(val.Name));
+        const wfsLayer = await WFSLayer(val.Name);
+        layers.push(wfsLayer);
       }
   }
+
+  //if (layers.length > 0)
+    //localStorage.setItem("wfsLayers", JSON.stringify(layers));
+
   return layers;
 }

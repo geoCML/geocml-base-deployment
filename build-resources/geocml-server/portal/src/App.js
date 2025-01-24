@@ -9,6 +9,7 @@ import { HostedLayers } from "./components/HostedLayers";
 import { reportInvalidWMS, showWebMap } from "./app-slice";
 import { Recommendations } from "./components/Recommendations";
 import { setIsMobile } from "./app-slice";
+import { LayerPicker } from "./components/LayerPicker";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -38,6 +39,7 @@ export default function App() {
               </p>
 
               <ContactInfo />
+              <LayerPicker />
 
               <div className="py-4"></div>
               <div className="row justify-content-center py-1">
