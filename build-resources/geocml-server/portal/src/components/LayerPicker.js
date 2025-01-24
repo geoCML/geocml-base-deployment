@@ -14,15 +14,22 @@ export function LayerPicker(props) {
       setSelectedField(Object.keys(wfsLayers[0].features[0].properties)[0]);
     }
 
+    if (selectedLayer && selectedField)
+      props.callback(selectedLayer, selectedField);
+
     try {
         return (
-          <div className="px-2 py-5">
-            <h3 className="row justify-content-center">Layer Picker</h3>
+          <div className="px-2 py-1">
             <select onChange={(e) => {
                 setSelectedField(Object.keys(selectedLayer.features[0].properties)[0]);
                 const foundLayer = wfsLayers.filter((layer) => layer.name === e.target.value)[0];
                 setSelectedLayer(foundLayer);
-            }}>
+            }}
+                className="mx-2"
+                style={{
+                    maxWidth: "25%"
+                }}
+            >
             {
                 wfsLayers.length ? wfsLayers.map((layer) => {
                     return (
@@ -34,7 +41,12 @@ export function LayerPicker(props) {
 
             <select onChange={(e) => {
                 setSelectedField(e.target.value);
-            }}>
+            }}
+                className="mx-2"
+                style={{
+                    maxWidth: "25%"
+                }}
+            >
             {
                 selectedLayer ? Object.keys(selectedLayer.features[0].properties).map((field) => {
                     return (
