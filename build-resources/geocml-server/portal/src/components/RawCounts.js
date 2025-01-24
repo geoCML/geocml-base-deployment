@@ -22,6 +22,9 @@ export function RawCounts() {
     try {
         return (
             <div className="border col justify-content-center">
+                <div className="row text-center py-2">
+                    <h5>Raw Counts</h5>
+                </div>
                 <div className="row text-center">
                     <LayerPicker callback={calculateRawCounts} />
                 </div>
