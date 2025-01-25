@@ -9,7 +9,6 @@ import { HostedLayers } from "./components/HostedLayers";
 import { reportInvalidWMS, showWebMap } from "./app-slice";
 import { Recommendations } from "./components/Recommendations";
 import { setIsMobile } from "./app-slice";
-import { RawCounts } from "./components/RawCounts";
 import { Dashboard } from "./components/Dashboard";
 
 export default function App() {

@@ -6,6 +6,8 @@ export function LayerPicker(props) {
   const wmsInfoValid = useSelector((state) => state.app.wmsInfoValid);
   const [selectedLayer, setSelectedLayer] = useState(undefined);
   const [selectedField, setSelectedField] = useState(undefined);
+  const [needsUpdate, setNeedsUpdate] = useState(true);
+
 
 
   if (wmsInfoValid) {
@@ -14,18 +16,29 @@ export function LayerPicker(props) {
       setSelectedField(Object.keys(wfsLayers[0].features[0].properties)[0]);
     }
 
-    if (selectedLayer && selectedField)
+    if (selectedLayer && selectedField && needsUpdate) {
       props.callback(selectedLayer, selectedField);
+      setNeedsUpdate(false);
+    }
 
     try {
         return (
-          <div className="px-2 py-1">
+          <div 
+            className="px-2 py-1 row"
+            style={{
+                maxWidth: "50%"
+            }}>
+            {
+                props.label ? (<p className="col-md-3">{props.label}</p>) 
+                : <div className="col-md-3"></div>
+            }
             <select onChange={(e) => {
                 setSelectedField(Object.keys(selectedLayer.features[0].properties)[0]);
                 const foundLayer = wfsLayers.filter((layer) => layer.name === e.target.value)[0];
                 setSelectedLayer(foundLayer);
+                setNeedsUpdate(true);
             }}
-                className="mx-2"
+                className="mx-2 col-md-3"
                 style={{
                     maxWidth: "25%"
                 }}
@@ -41,8 +54,9 @@ export function LayerPicker(props) {
 
             <select onChange={(e) => {
                 setSelectedField(e.target.value);
+                setNeedsUpdate(true);
             }}
-                className="mx-2"
+                className="mx-2 col-md-3"
                 style={{
                     maxWidth: "25%"
                 }}
