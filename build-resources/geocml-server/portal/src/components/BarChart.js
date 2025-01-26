@@ -2,12 +2,7 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import { LayerPicker } from "./LayerPicker";
 import { Bar } from "react-chartjs-2";
-import { Chart, CategoryScale, BarElement, LinearScale } from "chart.js";
 
-Chart.register(CategoryScale);
-Chart.register(LinearScale);
-Chart.register(BarElement);
-Chart.defaults.backgroundColor = "#004aad";
 
 export function BarChart() {
   const wmsInfoValid = useSelector((state) => state.app.wmsInfoValid);

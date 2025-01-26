@@ -2,11 +2,7 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import { LayerPicker } from "./LayerPicker";
 import { Pie } from "react-chartjs-2";
-import { Chart, ArcElement, Tooltip } from "chart.js";
 
-// TODO: We can register everything in the Dashboard component!
-Chart.register(ArcElement);
-Chart.register(Tooltip);
 
 export function PieChart() {
   const wmsInfoValid = useSelector((state) => state.app.wmsInfoValid);
