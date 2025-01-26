@@ -1,5 +1,6 @@
 import { RawCounts } from "./RawCounts";
 import { BarChart } from "./BarChart";
+import { PieChart } from "./PieChart";
 
 export function Dashboard() {
     return (
@@ -7,6 +8,7 @@ export function Dashboard() {
             <h3 className="row justify-content-center pt-2">WFS Dashboard</h3>
             <RawCounts />
             <BarChart />
+            <PieChart />
         </div>
     )
 }

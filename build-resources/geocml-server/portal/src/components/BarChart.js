@@ -41,7 +41,7 @@ export function BarChart() {
       });
 
       yAxis.layer.features.map((feature) => {
-          if (typeof feature.properties[yAxis.field] !== "number")
+          if (typeof feature.properties[yAxis.field] !== "number") // TODO: rm me!
               return
 
           if (xLabels.includes(feature.properties[xAxis.field]))
