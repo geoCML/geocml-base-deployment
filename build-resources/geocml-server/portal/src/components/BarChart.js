@@ -4,7 +4,7 @@ import { LayerPicker } from "./LayerPicker";
 import { Bar } from "react-chartjs-2";
 
 
-export function BarChart() {
+export function BarChart(props) {
   const wmsInfoValid = useSelector((state) => state.app.wmsInfoValid);
   const [xAxis, setXAxis] = useState(undefined);
   const [yAxis, setYAxis] = useState(undefined);
@@ -50,31 +50,49 @@ export function BarChart() {
   if (wmsInfoValid) {
     try {
         return (
-            <div className="border col justify-content-center">
+            <div className="border justify-content-center" style={{ height: "400px" }}>
+                <div className="row justify-content-end">
+                    <div
+                      className="btn btn-danger border mr-5"
+                      style={{
+                        width: "35px",
+                        marginRight: "12px"
+                      }}
+                      onClick={() => {props.onClose()}}
+                    >
+                        X
+                    </div>
+                </div>
+
                 <div className="row text-center py-2">
                     <h5>Bar Chart</h5>
                 </div>
-                <div className="row text-center">
-                    <LayerPicker callback={(layer, field) => setXAxis(() => {
-                        const axis = { layer, field };
-                        findUniqueFieldValues(axis);
-                        return axis;
-                    })} label="x-axis: "/>
-                    <LayerPicker callback={(layer, field) => setYAxis({ layer, field })} label="y-axis: "/>
+
+                <div className="row text-center" style={{ height: "15%" }}>
+                    <div className="col">
+                        <LayerPicker callback={(layer, field) => setXAxis(() => {
+                            const axis = { layer, field };
+                            findUniqueFieldValues(axis);
+                            return axis;
+                        })} label="x-axis: "/>
+                    </div>
+                    <div className="col">
+                        <LayerPicker callback={(layer, field) => setYAxis({ layer, field })} label="y-axis: "/>
+                    </div>
                 </div>
-                <div className="row text-center">
-                <Bar
-                  data={{
-                    labels: xLabels ? xLabels : [],
-                    datasets: [{
-                        label: "Counts",
-                        data: aggregateCountsOfUniqueFieldValues(),
-                        borderWidth: 1,
-                    }],
-                  }}
-                  width={"960px"}
-                  updateMode={"resize"}
-                />
+
+                <div className="row justify-content-center" style={{ height: "60%" }}>
+                    <Bar
+                      data={{
+                        labels: xLabels ? xLabels : [],
+                        datasets: [{
+                            label: "Counts",
+                            data: aggregateCountsOfUniqueFieldValues(),
+                            borderWidth: 1,
+                        }],
+                      }}
+                      updateMode={"resize"}
+                    />
                 </div>
             </div>
         )

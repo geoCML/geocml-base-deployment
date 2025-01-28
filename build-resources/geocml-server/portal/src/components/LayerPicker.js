@@ -26,7 +26,7 @@ export function LayerPicker(props) {
           <div 
             className="px-2 py-1 row"
             style={{
-                maxWidth: "50%"
+                maxWidth: "100%"
             }}>
             {
                 props.label ? (<p className="col-md-3">{props.label}</p>) 

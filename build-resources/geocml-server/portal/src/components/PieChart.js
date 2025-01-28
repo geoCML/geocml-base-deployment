@@ -4,10 +4,11 @@ import { LayerPicker } from "./LayerPicker";
 import { Pie } from "react-chartjs-2";
 
 
-export function PieChart() {
+export function PieChart(props) {
   const wmsInfoValid = useSelector((state) => state.app.wmsInfoValid);
   const [axis, setAxis] = useState(undefined);
   const [labels, setLabels] = useState(undefined);
+
 
   function getRandomColors() {
       const colors = [];
@@ -21,6 +22,7 @@ export function PieChart() {
 
       return colors
   }
+
 
   function findUniqueFieldValues(axis) {
     const knownFieldValues = [];
@@ -58,29 +60,44 @@ export function PieChart() {
   if (wmsInfoValid) {
     try {
         return (
-            <div className="border col justify-content-center">
+            <div className="border justify-content-center" style={{ height: "400px" }}>
+                <div className="row justify-content-end">
+                    <div
+                      className="btn btn-danger border mr-5"
+                      style={{
+                        width: "35px",
+                        marginRight: "12px"
+                      }}
+                      onClick={() => {props.onClose()}}
+                    >
+                        X
+                    </div>
+                </div>
+
                 <div className="row text-center py-2">
                     <h5>Pie Chart</h5>
                 </div>
-                <div className="row text-center">
+
+                <div className="row text-center" style={{ height: "15%" }}>
                     <LayerPicker callback={(layer, field) => setAxis(() => {
                         const tmpAxis = { layer, field };
                         findUniqueFieldValues(tmpAxis);
                         return tmpAxis;
                     })}/>
                 </div>
-                <div className="row text-center">
-                <Pie
-                  data={{
-                    labels: labels ? labels : [],
-                    datasets: [{
-                        data: aggregateCountsOfUniqueFieldValues(),
-                        backgroundColor: getRandomColors(),
-                        borderWidth: 1,
-                    }],
-                  }}
-                  width={"960px"}
-                />
+
+                <div className="row justify-content-center pt-4" style={{ height: "60%" }}>
+                    <Pie
+                      data={{
+                        labels: labels ? labels : [],
+                        datasets: [{
+                            data: aggregateCountsOfUniqueFieldValues(),
+                            backgroundColor: getRandomColors(),
+                            borderWidth: 1,
+                        }],
+                      }}
+                      width={"960px"}
+                    />
                 </div>
             </div>
         )

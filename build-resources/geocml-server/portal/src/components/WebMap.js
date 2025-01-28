@@ -57,19 +57,20 @@ export function WebMap() {
         ></div>
 
         <div
-          className="position-absolute btn btn-light border"
+          className="position-absolute btn btn-danger border"
           id="close-btn"
           style={{
             top: 10,
             right: 10,
             zIndex: 99,
+            width: "35px",
           }}
           onClick={() => {
             dispatch(hideWebMap());
             map.current = undefined;
           }}
         >
-          Close
+          X
         </div>
 
         <div
