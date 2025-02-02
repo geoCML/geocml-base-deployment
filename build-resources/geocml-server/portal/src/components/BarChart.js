@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LayerPicker } from "./LayerPicker";
 import { Bar } from "react-chartjs-2";
 
@@ -10,6 +10,14 @@ export function BarChart(props) {
   const [yAxis, setYAxis] = useState(undefined);
   const [xLabels, setXLabels] = useState(undefined);
 
+
+  useEffect(() => {
+    if (xAxis && yAxis)
+        props.onSetAxis([
+            { layer: xAxis.layer, field: xAxis.field },
+            { layer: yAxis.layer, field: yAxis.field },
+        ]);
+  }, [xAxis, yAxis])
 
   function findUniqueFieldValues(axis) {
     const knownFieldValues = [];
@@ -50,7 +58,7 @@ export function BarChart(props) {
   if (wmsInfoValid) {
     try {
         return (
-            <div className="border justify-content-center" style={{ height: "400px" }}>
+            <div className="border justify-content-center rounded-3" style={{ height: "400px" }}>
                 <div className="row justify-content-end">
                     <div
                       className="btn btn-danger border mr-5"
@@ -70,14 +78,14 @@ export function BarChart(props) {
 
                 <div className="row text-center" style={{ height: "15%" }}>
                     <div className="col">
-                        <LayerPicker callback={(layer, field) => setXAxis(() => {
+                        <LayerPicker axis={props.axes[0]} callback={(layer, field) => setXAxis(() => {
                             const axis = { layer, field };
                             findUniqueFieldValues(axis);
                             return axis;
                         })} label="x-axis: "/>
                     </div>
                     <div className="col">
-                        <LayerPicker callback={(layer, field) => setYAxis({ layer, field })} label="y-axis: "/>
+                        <LayerPicker axis={props.axes[1]} callback={(layer, field) => setYAxis({ layer, field })} label="y-axis: "/>
                     </div>
                 </div>
 

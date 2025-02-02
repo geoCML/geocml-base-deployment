@@ -21,7 +21,7 @@ export function RawCounts(props) {
   if (wmsInfoValid) {
     try {
         return (
-            <div className="border justify-content-center" style={{ height: "400px" }}>
+            <div className="border justify-content-center rounded-3" style={{ height: "400px" }}>
                 <div className="row justify-content-end">
                     <div
                       className="btn btn-danger border mr-5"
@@ -39,7 +39,10 @@ export function RawCounts(props) {
                     <h5>Raw Counts</h5>
                 </div>
                 <div className="row text-center" style={{ height: "15%" }}>
-                    <LayerPicker callback={calculateRawCounts} />
+                    <LayerPicker axis={props.axis[0]} callback={(layer, field) => {
+                        calculateRawCounts(layer, field);
+                        props.onSetAxis([{ layer, field }]);
+                    }} />
                 </div>
                 <div className="row text-center" style={{ height: "70%" }}>
                     <h1 className="display-1 pt-5">{ rawCount.toLocaleString() }</h1>

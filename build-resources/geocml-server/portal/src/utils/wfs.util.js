@@ -73,8 +73,5 @@ export async function getLayersFromWFSInfo(wfsInfo) {
       }
   }
 
-  //if (layers.length > 0)
-    //localStorage.setItem("wfsLayers", JSON.stringify(layers));
-
   return layers;
 }

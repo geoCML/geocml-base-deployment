@@ -1,26 +1,30 @@
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function LayerPicker(props) {
   const wfsLayers = useSelector((state) => state.app.wfsLayers);
   const wmsInfoValid = useSelector((state) => state.app.wmsInfoValid);
   const [selectedLayer, setSelectedLayer] = useState(undefined);
   const [selectedField, setSelectedField] = useState(undefined);
-  const [needsUpdate, setNeedsUpdate] = useState(true);
 
+  useEffect(() => {
+      if (!selectedLayer && wfsLayers && wfsLayers.length > 0) {
+          if (props.axis) {
+              const foundLayer = wfsLayers.filter((layer) => layer.name === props.axis.layer)[0];
+              setSelectedLayer(foundLayer);
+              setSelectedField(props.axis.field);
+          } else {
+              setSelectedLayer(wfsLayers[0]);
+              setSelectedField(Object.keys(wfsLayers[0].features[0].properties)[0]);
+          }
+      }
 
+      if (selectedLayer && selectedField) {
+        props.callback(selectedLayer, selectedField);
+      }
+  }, [selectedLayer, selectedField, wfsLayers])
 
   if (wmsInfoValid) {
-    if (wfsLayers.length > 0 && !selectedLayer) {
-      setSelectedLayer(wfsLayers[0]);
-      setSelectedField(Object.keys(wfsLayers[0].features[0].properties)[0]);
-    }
-
-    if (selectedLayer && selectedField && needsUpdate) {
-      props.callback(selectedLayer, selectedField);
-      setNeedsUpdate(false);
-    }
-
     try {
         return (
           <div 
@@ -36,7 +40,6 @@ export function LayerPicker(props) {
                 setSelectedField(Object.keys(selectedLayer.features[0].properties)[0]);
                 const foundLayer = wfsLayers.filter((layer) => layer.name === e.target.value)[0];
                 setSelectedLayer(foundLayer);
-                setNeedsUpdate(true);
             }}
                 className="mx-2 col-md-3"
                 style={{
@@ -45,16 +48,21 @@ export function LayerPicker(props) {
             >
             {
                 wfsLayers.length ? wfsLayers.map((layer) => {
-                    return (
-                        <option value={layer.name}>{layer.name}</option>
-                    )
+                    if (selectedLayer && selectedLayer === layer.name) {
+                        return (
+                            <option value={layer.name} selected={true}>{layer.name}</option>
+                        )
+                    } else {
+                        return (
+                            <option value={layer.name}>{layer.name}</option>
+                        )
+                    }
                 }) : (<div></div>)
             }
             </select>
 
             <select onChange={(e) => {
                 setSelectedField(e.target.value);
-                setNeedsUpdate(true);
             }}
                 className="mx-2 col-md-3"
                 style={{
@@ -63,13 +71,18 @@ export function LayerPicker(props) {
             >
             {
                 selectedLayer ? Object.keys(selectedLayer.features[0].properties).map((field) => {
-                    return (
-                        <option value={field}>{field}</option>
-                    )
+                    if (selectedField && selectedField === field) {
+                        return (
+                            <option value={field} selected={true}>{field}</option>
+                        )
+                    } else {
+                        return (
+                            <option value={field}>{field}</option>
+                        )
+                    }
                 }) : (<div></div>)
             }
             </select>
-
         </div>
       )
     } catch (err) {

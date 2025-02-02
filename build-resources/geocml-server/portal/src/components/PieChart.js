@@ -60,7 +60,7 @@ export function PieChart(props) {
   if (wmsInfoValid) {
     try {
         return (
-            <div className="border justify-content-center" style={{ height: "400px" }}>
+            <div className="border justify-content-center rounded-3" style={{ height: "400px" }}>
                 <div className="row justify-content-end">
                     <div
                       className="btn btn-danger border mr-5"
@@ -79,9 +79,10 @@ export function PieChart(props) {
                 </div>
 
                 <div className="row text-center" style={{ height: "15%" }}>
-                    <LayerPicker callback={(layer, field) => setAxis(() => {
+                    <LayerPicker axis={props.axis[0]} callback={(layer, field) => setAxis(() => {
                         const tmpAxis = { layer, field };
                         findUniqueFieldValues(tmpAxis);
+                        props.onSetAxis([ tmpAxis ]);
                         return tmpAxis;
                     })}/>
                 </div>
