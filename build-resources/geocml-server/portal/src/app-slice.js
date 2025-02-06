@@ -7,6 +7,8 @@ export const appSlice = createSlice({
     wmsInfo: {},
     wfsInfo: {},
     wcsInfo: {},
+    wfsInfoValid: true,
+    wcsInfoValid: true,
     wmsInfoValid: true,
     webMapVisible: false,
     layersPaneVisible: false,
@@ -50,8 +52,24 @@ export const appSlice = createSlice({
       state.wmsInfoValid = false;
     },
 
+    reportInvalidWFS: (state) => {
+      state.wfsInfoValid = false;
+    },
+
+    reportInvalidWCS: (state) => {
+      state.wcsInfoValid = false;
+    },
+
     reportValidWMS: (state) => {
       state.wmsInfoValid = true;
+    },
+
+    reportValidWFS: (state) => {
+      state.wfsInfoValid = true;
+    },
+
+    reportValidWCS: (state) => {
+      state.wcsInfoValid = true;
     },
 
     setWFSLayers: (state, action) => {
@@ -94,6 +112,10 @@ export const {
   setWCSInfo,
   reportInvalidWMS,
   reportValidWMS,
+  reportInvalidWFS,
+  reportValidWFS,
+  reportInvalidWCS,
+  reportValidWCS,
   setWFSLayers,
   setWCSLayers,
   setRecommendations,

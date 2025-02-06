@@ -1,10 +1,10 @@
 import { XMLParser } from "fast-xml-parser";
 import axios from "axios";
 import {
-  loaded,
-  loading,
   setWFSLayers,
   setWFSInfo,
+  reportValidWFS,
+  reportInvalidWFS
 } from "../app-slice";
 
 export async function WFSLayer(name) {
@@ -36,23 +36,21 @@ async function getFeaturesFromLayer(layerName) {
         })
 }
 
-export function collectInfoFromWFS(dispatch) {
+export async function collectInfoFromWFS(dispatch) {
+  dispatch(reportInvalidWFS());
   const xmlParser = new XMLParser();
-  dispatch(loading());
 
-  axios
+  await axios
     .get(
       "/cgi-bin/qgis_mapserv.fcgi?SERVICE=WFS&VERSION=1.3.0&REQUEST=GetCapabilities",
     )
     .then(async (res) => {
       dispatch(setWFSInfo(xmlParser.parse(res.data)));
       dispatch(setWFSLayers(await getLayersFromWFSInfo(xmlParser.parse(res.data))));
+      dispatch(reportValidWFS());
     })
     .catch((err) => {
       console.error("ERROR: ", err.message);
-    })
-    .finally(() => {
-      dispatch(loaded());
     });
 }
 
