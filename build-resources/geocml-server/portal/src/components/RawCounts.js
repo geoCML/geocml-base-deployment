@@ -3,7 +3,7 @@ import { useState } from "react";
 import { LayerPicker } from "./LayerPicker";
 
 export function RawCounts(props) {
-  const wmsInfoValid = useSelector((state) => state.app.wmsInfoValid);
+  const wfsInfoValid = useSelector((state) => state.app.wfsInfoValid);
   const [rawCount, setRawCount] = useState(0);
 
   function calculateRawCounts(layer, field) {
@@ -18,7 +18,7 @@ export function RawCounts(props) {
   }
 
 
-  if (wmsInfoValid) {
+  if (wfsInfoValid) {
     try {
         return (
             <div className="border justify-content-center rounded-3" style={{ height: "400px" }}>

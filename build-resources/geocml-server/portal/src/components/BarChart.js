@@ -5,7 +5,7 @@ import { Bar } from "react-chartjs-2";
 
 
 export function BarChart(props) {
-  const wmsInfoValid = useSelector((state) => state.app.wmsInfoValid);
+  const wfsInfoValid = useSelector((state) => state.app.wfsInfoValid);
   const [xAxis, setXAxis] = useState(undefined);
   const [yAxis, setYAxis] = useState(undefined);
   const [xLabels, setXLabels] = useState(undefined);
@@ -55,7 +55,7 @@ export function BarChart(props) {
   }
 
 
-  if (wmsInfoValid) {
+  if (wfsInfoValid) {
     try {
         return (
             <div className="border justify-content-center rounded-3" style={{ height: "400px" }}>

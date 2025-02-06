@@ -5,7 +5,7 @@ import { Pie } from "react-chartjs-2";
 
 
 export function PieChart(props) {
-  const wmsInfoValid = useSelector((state) => state.app.wmsInfoValid);
+  const wfsInfoValid = useSelector((state) => state.app.wfsInfoValid);
   const [axis, setAxis] = useState(undefined);
   const [labels, setLabels] = useState(undefined);
 
@@ -57,7 +57,7 @@ export function PieChart(props) {
   }
 
 
-  if (wmsInfoValid) {
+  if (wfsInfoValid) {
     try {
         return (
             <div className="border justify-content-center rounded-3" style={{ height: "400px" }}>
