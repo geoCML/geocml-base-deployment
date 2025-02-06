@@ -1,19 +1,16 @@
 import { XMLParser } from "fast-xml-parser";
 import axios from "axios";
 import {
-  loaded,
-  loading,
   reportInvalidWMS,
   reportValidWMS,
   setWMSInfo,
 } from "../app-slice";
 
-export function collectInfoFromWMS(dispatch) {
+export async function collectInfoFromWMS(dispatch) {
   const xmlParser = new XMLParser();
-  dispatch(loading());
   dispatch(reportInvalidWMS());
 
-  axios
+  await axios
     .get(
       "/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities",
     )
@@ -23,8 +20,5 @@ export function collectInfoFromWMS(dispatch) {
     })
     .catch((err) => {
       console.log(err);
-    })
-    .finally(() => {
-      dispatch(loaded());
     });
 }
