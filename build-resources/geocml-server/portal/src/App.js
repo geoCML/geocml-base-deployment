@@ -187,6 +187,7 @@ export default function App() {
         </div>
       );
     } catch (err) {
+      console.log(err);
       setError(true);
     }
   } else {
