@@ -1,57 +1,29 @@
 FROM ubuntu:22.04
-USER root
 
 ARG DRGON_HOST=""
 ARG DEBIAN_FRONTEND=noninteractive
+USER root
+WORKDIR /
+
 RUN apt update
-
-# Install QGIS Server
 RUN apt install -y qgis-server --no-install-recommends --no-install-suggests
+RUN apt install -y apache2 libapache2-mod-wsgi-py3 libapache2-mod-fcgid nix
 
-# Install Apache and dependencies
-RUN apt install -y apache2 libapache2-mod-wsgi-py3 libapache2-mod-fcgid
-
-# Copy Apache conf file to container
 COPY ./build-resources/geocml-server/geocml.server.conf /etc/apache2/sites-available/geocml.server.conf
-
-# Install Ansible
-RUN apt install -y ansible
-
-# Install npm
-RUN apt install -y npm
-
-# Copy portal source to container
-ADD ./build-resources/geocml-server/portal/ /portal/
-
-# Install Node dependencies
-RUN cd /portal/ && npm i
-
-# Add DRGON_HOST to NodeJS .env file
-RUN echo REACT_APP_DRGON_HOST=$DRGON_HOST >> /portal/.env
-
-# Install Ansible dependencies and run through playbook
+ADD ./build-resources/geocml-server/portal/ ./portal/
 COPY ./ansible-playbooks/geocml-server-requirements.yaml ./ansible-playbooks/geocml-server-playbook.yaml ./
-RUN ansible-galaxy collection install ansible.posix && ansible-galaxy install -r geocml-server-requirements.yaml && ansible-playbook -i,localhost geocml-server-playbook.yaml --tags "all" && rm -f ./*.yaml
+COPY ./build-resources/geocml-server/make.sh ./make.sh
+
+RUN chmod +x ./make.sh
+RUN ./make.sh
 
 ######### Customize Container Here ###########
 ######### End Customizations ###########
 
-# Copy build script to /var/www/html
-RUN cp -rf /portal/build/* /var/www/html/
-
-# Copy start script
-COPY ./build-resources/geocml-server/start-geocml-server.sh /start-geocml-server.sh
-
-# Uninstall Ansible stuff
-RUN rm -rf $HOME/.ansible && apt purge -y ansible*
-
-# Uninstall npm
-RUN apt purge -y npm*
-
-# Remove build resources
-RUN rm -rf /portal/
-
-# Remove install cache
 RUN apt clean autoclean && apt autoremove -y && rm -rf /var/lib/{apt,dpkg,cache,log}/
+RUN nix-collect-garbage -d
+RUN rm ./make.sh
 
-CMD sh /start-geocml-server.sh
+COPY ./build-resources/geocml-server/entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+CMD ./entrypoint.sh

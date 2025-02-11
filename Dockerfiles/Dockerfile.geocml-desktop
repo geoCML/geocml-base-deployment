@@ -1,20 +1,18 @@
 FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
+USER root
+WORKDIR /
+
 RUN apt update
-RUN apt install -y nix xvfb x11-xserver-utils
+RUN apt install -y nix
 
 RUN useradd -d /home/user -m user
 
-# Install Ansible dependencies and run through playbook
-COPY ./ansible-playbooks/geocml-desktop-requirements.yaml ./ansible-playbooks/geocml-desktop-playbook.yaml ./
-
 COPY ./build-resources/geocml-desktop/make.sh ./make.sh
-
 RUN chmod +x ./make.sh
 RUN ./make.sh
 
-# Copy xpra web client files to container
 COPY ./build-resources/geocml-desktop/connect.html /usr/share/xpra/www/connect.html
 COPY ./build-resources/geocml-desktop/connect.css /usr/share/xpra/www/css/connect.css
 COPY ./build-resources/geocml-desktop/geocml-desktop-logo.png /usr/share/xpra/www/icons/geocml-desktop-logo.png
@@ -23,12 +21,9 @@ COPY ./build-resources/geocml-desktop/html5-backgrounds/* /usr/share/xpra/www/
 ######### Customize Container Here ###########
 ######### End Customizations ###########
 
-# Uninstall Ansible stuff
-RUN rm -rf $HOME/.ansible && apt purge -y ansible* # TODO: Do we still need to do this?
-
-# Remove install cache
 RUN apt clean autoclean && apt autoremove -y && rm -rf /var/lib/{apt,dpkg,cache,log}/
 RUN nix-collect-garbage -d
+RUN rm ./make.sh
 
 COPY ./build-resources/geocml-desktop/entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh

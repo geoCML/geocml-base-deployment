@@ -31,16 +31,16 @@ echo "Welcome to geoCML $VERSION!"
 if [ "$GEOCML_DEPLOYMENT_NAME" == "" ]
 then
     echo "\nPlease enter the name you want to use to for this deployment."
-    echo "(This will create a folder for your geoCML deployment in $HOME)"
+    echo "(This will create a folder for your geoCML deployment at $HOME)"
     read GEOCML_DEPLOYMENT_NAME
     export GEOCML_DEPLOYMENT_NAME=$GEOCML_DEPLOYMENT_NAME
     touch ~/.bashrc &> /dev/null
     if grep -q GEOCML_DEPLOYMENT_NAME ~/.bashrc; then
         echo "[INFO] Updating GEOCML_DEPLOYMENT_NAME in your bash profile."
-        sed -i '' 's/GEOCML_DEPLOYMENT_NAME=.*/GEOCML_DEPLOYMENT_NAME='$GEOCML_DEPLOYMENT_NAME'/' ~/.bashrc
+        sed -i '' 's/export GEOCML_DEPLOYMENT_NAME=.*/export GEOCML_DEPLOYMENT_NAME='$GEOCML_DEPLOYMENT_NAME'/' ~/.bashrc
     else
         echo "[INFO] Adding this to your bash profile for future use."
-        echo "GEOCML_DEPLOYMENT_NAME=$GEOCML_DEPLOYMENT_NAME" >> ~/.bashrc
+        echo "export GEOCML_DEPLOYMENT_NAME=$GEOCML_DEPLOYMENT_NAME" >> ~/.bashrc
     fi
 fi
 
@@ -53,10 +53,10 @@ then
     touch ~/.bashrc &> /dev/null
     if grep -q GEOCML_DESKTOP_PASSWORD ~/.bashrc; then
         echo "[INFO] Updating GEOCML_DESKTOP_PASSWORD in your bash profile."
-        sed -i '' 's/GEOCML_DESKTOP_PASSWORD=.*/GEOCML_DESKTOP_PASSWORD='$GEOCML_DESKTOP_PASSWORD'/' ~/.bashrc
+        sed -i '' 's/export GEOCML_DESKTOP_PASSWORD=.*/export GEOCML_DESKTOP_PASSWORD='$GEOCML_DESKTOP_PASSWORD'/' ~/.bashrc
     else
         echo "[INFO] Adding this to your bash profile for future use."
-        echo "GEOCML_DESKTOP_PASSWORD=$GEOCML_DESKTOP_PASSWORD" >> ~/.bashrc
+        echo "export GEOCML_DESKTOP_PASSWORD=$GEOCML_DESKTOP_PASSWORD" >> ~/.bashrc
     fi
 fi
 
@@ -68,10 +68,10 @@ then
     touch ~/.bashrc &> /dev/null
     if grep -q GEOCML_POSTGRES_ADMIN_PASSWORD ~/.bashrc; then
         echo "[INFO] Updating GEOCML_POSTGRES_ADMIN_PASSWORD in your bash profile."
-        sed -i '' 's/GEOCML_POSTGRES_ADMIN_PASSWORD=.*/GEOCML_POSTGRES_ADMIN_PASSWORD='$GEOCML_POSTGRES_ADMIN_PASSWORD'/' ~/.bashrc
+        sed -i '' 's/export GEOCML_POSTGRES_ADMIN_PASSWORD=.*/export GEOCML_POSTGRES_ADMIN_PASSWORD='$GEOCML_POSTGRES_ADMIN_PASSWORD'/' ~/.bashrc
     else
         echo "[INFO] Adding this to your bash profile for future use."
-        echo "GEOCML_POSTGRES_ADMIN_PASSWORD=$GEOCML_POSTGRES_ADMIN_PASSWORD" >> ~/.bashrc
+        echo "export GEOCML_POSTGRES_ADMIN_PASSWORD=$GEOCML_POSTGRES_ADMIN_PASSWORD" >> ~/.bashrc
     fi
 fi
 
@@ -83,10 +83,10 @@ then
     touch ~/.bashrc &> /dev/null
     if grep -q GEOCML_POSTGRES_PASSWORD ~/.bashrc; then
         echo "[INFO] Updating GEOCML_POSTGRES_PASSWORD in your bash profile."
-        sed -i '' 's/GEOCML_POSTGRES_PASSWORD=.*/GEOCML_POSTGRES_PASSWORD='$GEOCML_POSTGRES_PASSWORD'/' ~/.bashrc
+        sed -i '' 's/export GEOCML_POSTGRES_PASSWORD=.*/export GEOCML_POSTGRES_PASSWORD='$GEOCML_POSTGRES_PASSWORD'/' ~/.bashrc
     else
         echo "[INFO] Adding this to your bash profile for future use."
-        echo "GEOCML_POSTGRES_PASSWORD=$GEOCML_POSTGRES_PASSWORD" >> ~/.bashrc
+        echo "export GEOCML_POSTGRES_PASSWORD=$GEOCML_POSTGRES_PASSWORD" >> ~/.bashrc
     fi
 fi
 
@@ -104,17 +104,38 @@ then
 elif [ "$GEOCML_INSTALLATION_METHOD" == "2" ]
 then
     echo "Okay, geoCML will be installed by building the containers locally from source."
+    mkdir ~/$GEOCML_DEPLOYMENT_NAME &> /dev/null
+    if [ $? -ne 0 ]
+    then
+        echo "\n[ERROR]: ~/$GEOCML_DEPLOYMENT_NAME is not empty."
+        echo "Can I delete the directory at $HOME/$GEOCML_DEPLOYMENT_NAME?"
+        echo "(yes/no)"
+        read RM_PROJECT_DIR
+
+        if [ "$RM_PROJECT_DIR"  == "yes" ]
+        then
+            echo "[INFO]: Removing directory at $HOME/$GEOCML_DEPLOYMENT_NAME"
+            rm -rf ~/$GEOCML_DEPLOYMENT_NAME
+            mkdir ~/$GEOCML_DEPLOYMENT_NAME &> /dev/null
+        else
+            kill $spinner_pid
+            wait $spinner_pid 2>/dev/null
+            echo "[ERROR]: Cannot create a geoCML deployment in a non-empty directory."
+            exit 1
+        fi
+    fi
+
     echo "\n[INFO]: Building geoCML..."
+
     spinner &
     spinner_pid=$!
-
     mkdir /tmp/geocml/ &> /dev/null
     mkdir /tmp/geocml/logs &> /dev/null
 
     if [ "$DOCKER_COMPOSE_PATH" == "" ]
     then
-        echo "\n[WARN]: It looks like this install script was run outside of the geoCML Base Deployment repository.."
-        echo "\n[INFO]: Cloning into /tmp/geocml-base-deployment"
+        echo "\n[WARN]: It looks like this install script was run outside of the geoCML Base Deployment repository..."
+        echo "\n[INFO]: Cloning into /tmp/geocml-base-deployment."
         git clone https://github.com/geoCML/geocml-base-deployment.git /tmp/geocml/geocml-base-deployment/ &> /tmp/geocml/logs/build.log
         cd /tmp/geocml/geocml-base-deployment/ &> /tmp/geocml/logs/build.log
         git fetch --tags --all &> /tmp/geocml/logs/build.log
@@ -122,14 +143,15 @@ then
         DOCKER_COMPOSE_PATH=/tmp/geocml/geocml-base-deployment/
     fi
 
-    mkdir ~/$GEOCML_DEPLOYMENT_NAME &> /tmp/geocml/logs/build.log
-    cp -r $DOCKER_COMPOSE_PATH/* ~/$GEOCML_DEPLOYMENT_NAME &> /tmp/geocml/logs/build.log
+    cp -r $DOCKER_COMPOSE_PATH/. ~/$GEOCML_DEPLOYMENT_NAME &> /tmp/geocml/logs/build.log
     cd ~/$GEOCML_DEPLOYMENT_NAME/ &> /tmp/geocml/logs/build.log
     docker compose build --build-arg GEOCML_POSTGRES_PASSWORD --build-arg GEOCML_POSTGRES_ADMIN_PASSWORD --build-arg DRGON_HOST &> /tmp/geocml/logs/build.log
     echo "\n[INFO]: Finished building."
     echo "[INFO]: Check /tmp/logs/geocml/build.log for additional information about your build!"
 else
     echo "No idea what $GEOCML_INSTALLATION_METHOD means! Please provide a valid installation method (1, 2). Exiting."
+    kill $spinner_pid
+    wait $spinner_pid 2>/dev/null
     exit 1
 fi
 
@@ -137,15 +159,9 @@ rm -rf /tmp/geocml/geocml-base-deployment/ &> /tmp/geocml/logs/build.log
 
 echo "[INFO] Starting geoCML..."
 
-if [ "$DOCKER_COMPOSE_PATH" == "" ]
-then
-    cd /tmp/geocml
-    docker compose up -d
-fi
-
 docker network create geocml-network &> /tmp/geocml/logs/start.log
 docker compose down &> /tmp/geocml/logs/start.log
-docker compose up -d &> /tmp/geocml/logs/start.log
+docker compose up -d --wait &> /tmp/geocml/logs/start.log
 kill $spinner_pid
 wait $spinner_pid 2>/dev/null
 echo "\n[INFO]: Finished startup."

@@ -1,40 +1,24 @@
-FROM ubuntu:22.04
+FROM  --platform=linux/amd64 ubuntu:22.04
 
 USER root
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt update -y
+RUN apt update
 RUN apt install -y software-properties-common
-RUN add-apt-repository ppa:deadsnakes/ppa && apt update -y
+RUN add-apt-repository ppa:deadsnakes/ppa && apt update
+RUN apt install -y nix python3.11 python3-pip python3.11-venv python3.11-dev
 
-# Install Python3.12 and Pip
-RUN apt install -y python3.12 python3-pip
+ADD ./build-resources/geocml-task-scheduler/geocml-task-scheduler ./geocml-task-scheduler/geocml-task-scheduler/
+COPY ./build-resources/geocml-task-scheduler/make.sh ./make.sh
 
-# Install Ansible dependencies
-RUN apt install -y git python3.12-venv python3.12-dev
-
-# Install nmap
-RUN apt install -y nmap
-
-# Install Ansible
-RUN apt install -y ansible
-
-# Copy gTS build resources to the container
-COPY ./build-resources/geocml-task-scheduler/ /geocml-task-scheduler
-
-# Install Ansible dependencies and run through playbook
-COPY ./ansible-playbooks/geocml-task-scheduler-requirements.yaml ./ansible-playbooks/geocml-task-scheduler-playbook.yaml ./
-RUN ansible-galaxy collection install ansible.posix && ansible-galaxy install -r geocml-task-scheduler-requirements.yaml && ansible-playbook -i,localhost geocml-task-scheduler-playbook.yaml --tags "all" && rm -f ./*.yaml
+RUN chmod +x ./make.sh
+RUN ./make.sh
 
 ######### Customize Container Here ###########
 ######### End Customizations ###########
 
-# Uninstall Ansible stuff
-RUN rm -rf $HOME/.ansible && apt purge -y ansible* && apt purge -y git*
-
-# Remove install cache
 RUN apt clean autoclean && apt autoremove -y && rm -rf /var/lib/{apt,dpkg,cache,log}/
+RUN nix-collect-garbage -d
 
-# Install Python dependencies
-RUN pip3 install -r /geocml-task-scheduler/geocml-task-scheduler/requirements.txt
-
-CMD python3 /geocml-task-scheduler/geocml-task-scheduler/schedule.py
+COPY ./build-resources/geocml-task-scheduler/entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+CMD ./entrypoint.sh
