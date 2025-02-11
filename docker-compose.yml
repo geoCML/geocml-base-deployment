@@ -8,7 +8,7 @@ services:
     image: ghcr.io/geocml/geocml-base-deployment:task-scheduler
     hostname: geocml-task-scheduler
     environment:
-      PATH: /geocml-task-scheduler/tabor/dist/tabor:$PATH
+      PATH: /geocml-task-scheduler/tabor/:$PATH
       DRGON_API_KEY: ${DRGON_API_KEY}
       DRGON_HOST: ${DRGON_HOST}
       GEOCML_DEPLOYMENT_HOST: ${GEOCML_DEPLOYMENT_HOST}
@@ -20,6 +20,10 @@ services:
       - type: bind
         source: ./persistence-layer
         target: /Persistence
+    healthcheck:
+      test: pgrep python3.11
+      interval: 30s
+      retries: 60
   geocml-desktop:
     build:
       context: .
@@ -36,6 +40,10 @@ services:
       XPRA_PASSWORD: ${GEOCML_DESKTOP_PASSWORD}
     networks:
       - geocml-network
+    healthcheck:
+      test: pgrep xpra
+      interval: 30s
+      retries: 60
   geocml-postgres:
     build:
       context: .
@@ -44,8 +52,15 @@ services:
     ports:
       - "5432:5432"
     hostname: geocml-postgres
+    environment:
+      GEOCML_POSTGRES_PASSWORD: ${GEOCML_POSTGRES_PASSWORD}
+      GEOCML_POSTGRES_ADMIN_PASSWORD: ${GEOCML_POSTGRES_ADMIN_PASSWORD}
     networks:
       - geocml-network
+    healthcheck:
+      test: pg_isready -d geocml_db
+      interval: 30s
+      retries: 60
   geocml-server:
     build:
       context: .
@@ -60,6 +75,10 @@ services:
     hostname: geocml-server
     networks:
       - geocml-network
+    healthcheck:
+      test: pgrep apache2
+      interval: 30s
+      retries: 60
 networks:
   geocml-network:
     external: true

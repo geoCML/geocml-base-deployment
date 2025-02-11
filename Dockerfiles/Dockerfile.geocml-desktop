@@ -1,40 +1,32 @@
 FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
+USER root
+WORKDIR /
+
 RUN apt update
+RUN apt install -y nix
 
 RUN useradd -d /home/user -m user
 
-# Install xpra
-RUN apt install -y wget gnupg xvfb x11-xserver-utils
-RUN wget -q https://xpra.org/gpg.asc -O- | apt-key add -
-RUN apt update
-RUN apt install -y xpra --no-install-recommends --no-install-suggests
+COPY ./build-resources/geocml-desktop/make.sh ./make.sh
+RUN chmod +x ./make.sh
+RUN ./make.sh
 
-# Install QGIS
-RUN apt install -y qgis
-
-# Install Ansible
-RUN apt install -y ansible
-
-# Copy xpra web client files to container
-COPY ../build-resources/geocml-desktop/connect.html /usr/share/xpra/www/connect.html
-COPY ../build-resources/geocml-desktop/connect.css /usr/share/xpra/www/css/connect.css
-COPY ../build-resources/geocml-desktop/geocml-desktop-logo.png /usr/share/xpra/www/icons/geocml-desktop-logo.png
-COPY ../build-resources/geocml-desktop/html5-backgrounds/* /usr/share/xpra/www/
-
-# Install Ansible dependencies and run through playbook
-COPY ./ansible-playbooks/geocml-desktop-requirements.yaml ./ansible-playbooks/geocml-desktop-playbook.yaml ./
-RUN ansible-galaxy collection install ansible.posix && ansible-galaxy install -r geocml-desktop-requirements.yaml && ansible-playbook -i,localhost geocml-desktop-playbook.yaml --tags "all" && rm -f ./*.yaml
+COPY ./build-resources/geocml-desktop/connect.html /usr/share/xpra/www/connect.html
+COPY ./build-resources/geocml-desktop/connect.css /usr/share/xpra/www/css/connect.css
+COPY ./build-resources/geocml-desktop/geocml-desktop-logo.png /usr/share/xpra/www/icons/geocml-desktop-logo.png
+COPY ./build-resources/geocml-desktop/html5-backgrounds/* /usr/share/xpra/www/
 
 ######### Customize Container Here ###########
 ######### End Customizations ###########
 
-# Uninstall Ansible stuff
-RUN rm -rf $HOME/.ansible && apt purge -y ansible*
-
-# Remove install cache
 RUN apt clean autoclean && apt autoremove -y && rm -rf /var/lib/{apt,dpkg,cache,log}/
+RUN nix-collect-garbage -d
+RUN rm ./make.sh
 
+COPY ./build-resources/geocml-desktop/entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+RUN chown -R user /nix/
 USER user
-CMD ["xpra", "start", ":100", "--start-child=/usr/bin/qgis /Persistence/geocml-project.qgz", "--bind-tcp=0.0.0.0:10000", "--tcp-auth=env", "--no-daemon", "--no-notifications", "--no-mdns", "--no-pulseaudio", "--exit-with-children"]
+CMD ./entrypoint.sh
