@@ -1,5 +1,4 @@
 ---
-version: "3.7"
 services:
   geocml-task-scheduler:
     build:
@@ -20,10 +19,14 @@ services:
       - type: bind
         source: ./persistence-layer
         target: /Persistence
+      - "/var/run/docker.sock:/var/run/docker.sock"
     healthcheck:
       test: pgrep python3.11
       interval: 30s
       retries: 60
+    depends_on:
+      geocml-desktop:
+        condition: service_healthy
   geocml-desktop:
     build:
       context: .
@@ -44,6 +47,9 @@ services:
       test: pgrep xpra
       interval: 30s
       retries: 60
+    depends_on:
+      geocml-postgres:
+        condition: service_healthy
   geocml-postgres:
     build:
       context: .
@@ -79,6 +85,9 @@ services:
       test: pgrep apache2
       interval: 30s
       retries: 60
+    depends_on:
+      geocml-postgres:
+        condition: service_healthy
 networks:
   geocml-network:
     external: true
