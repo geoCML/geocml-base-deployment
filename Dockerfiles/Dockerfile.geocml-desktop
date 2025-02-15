@@ -5,7 +5,7 @@ USER root
 WORKDIR /
 
 RUN apt update
-RUN apt install -y nix
+RUN apt install -y nix python3-pip
 
 RUN useradd -d /home/user -m user
 
