@@ -1,32 +1,39 @@
 ---
-version: "3.7"
 services:
-  geocml-task-scheduler-dev:
+  geocml-task-scheduler:
     build:
       context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-task-scheduler
     image: ghcr.io/geocml/geocml-base-deployment:task-scheduler
     hostname: geocml-task-scheduler
     environment:
-      PATH: /geocml-task-scheduler/tabor/dist/tabor:$PATH
+      PATH: /geocml-task-scheduler/tabor/:$PATH
       DRGON_API_KEY: ${DRGON_API_KEY}
       DRGON_HOST: ${DRGON_HOST}
       GEOCML_DEPLOYMENT_HOST: ${GEOCML_DEPLOYMENT_HOST}
       GEOCML_POSTGRES_PASSWORD: ${GEOCML_POSTGRES_PASSWORD}
       GEOCML_POSTGRES_ADMIN_PASSWORD: ${GEOCML_POSTGRES_ADMIN_PASSWORD}
     networks:
-      - geocml-network-dev
+      - geocml-network
     volumes:
       - type: bind
         source: ./persistence-layer
         target: /Persistence
-  geocml-desktop-dev:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test: pgrep python3.11
+      interval: 30s
+      retries: 60
+    depends_on:
+      geocml-desktop:
+        condition: service_healthy
+  geocml-desktop:
     build:
       context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-desktop
     image: ghcr.io/geocml/geocml-base-deployment:desktop
     ports:
-      - "10001:10000"
+      - "10000:10000"
     volumes:
       - type: bind
         source: ./persistence-layer
@@ -35,32 +42,53 @@ services:
     environment:
       XPRA_PASSWORD: ${GEOCML_DESKTOP_PASSWORD}
     networks:
-      - geocml-network-dev
-  geocml-postgres-dev:
+      - geocml-network
+    healthcheck:
+      test: pgrep xpra
+      interval: 30s
+      retries: 60
+    depends_on:
+      geocml-postgres:
+        condition: service_healthy
+  geocml-postgres:
     build:
       context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-postgres
     image: ghcr.io/geocml/geocml-base-deployment:postgres
     ports:
-      - "5434:5432"
+      - "5432:5432"
     hostname: geocml-postgres
+    environment:
+      GEOCML_POSTGRES_PASSWORD: ${GEOCML_POSTGRES_PASSWORD}
+      GEOCML_POSTGRES_ADMIN_PASSWORD: ${GEOCML_POSTGRES_ADMIN_PASSWORD}
     networks:
-      - geocml-network-dev
-  geocml-server-dev:
+      - geocml-network
+    healthcheck:
+      test: pg_isready -d geocml_db
+      interval: 30s
+      retries: 60
+  geocml-server:
     build:
       context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-server
     image: ghcr.io/geocml/geocml-base-deployment:server
     ports:
-      - "8085:80"
+      - "80:80"
     volumes:
       - type: bind
         source: ./persistence-layer
         target: /Persistence
     hostname: geocml-server
     networks:
-      - geocml-network-dev
+      - geocml-network
+    healthcheck:
+      test: pgrep apache2
+      interval: 30s
+      retries: 60
+    depends_on:
+      geocml-postgres:
+        condition: service_healthy
 networks:
-  geocml-network-dev:
+  geocml-network:
     external: true
     driver: bridge

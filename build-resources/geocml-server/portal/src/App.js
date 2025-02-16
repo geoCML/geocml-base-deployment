@@ -1,31 +1,56 @@
 import { ContactInfo } from "./components/ContactInfo";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { collectInfoFromWMS } from "./utils/wms.util";
 import { collectInfoFromWFS } from "./utils/wfs.util";
 import { collectInfoFromWCS } from "./utils/wcs.util";
 import { HostedLayers } from "./components/HostedLayers";
-import { reportInvalidWMS, showWebMap } from "./app-slice";
+import { showWebMap, loading, loaded } from "./app-slice";
 import { Recommendations } from "./components/Recommendations";
 import { setIsMobile } from "./app-slice";
+import { Dashboard } from "./components/Dashboard"
+
 
 export default function App() {
-  const dispatch = useDispatch();
+  async function load(attempts = 0) {
+    dispatch(loading());
+
+    if (attempts === 10) {
+        dispatch(loaded());
+        return;
+    }
+
+    await Promise.all([
+        collectInfoFromWMS(dispatch),
+        collectInfoFromWFS(dispatch),
+        collectInfoFromWCS(dispatch),
+    ])
+
+    if (!wmsInfoValid)
+        load(attempts + 1);
+    else {
+        setError(false);
+        dispatch(loaded());
+        return;
+    }
+  }
+
+  const [error, setError] = useState(true);
   const wmsInfo = useSelector((state) => state.app.wmsInfo);
   const wmsInfoValid = useSelector((state) => state.app.wmsInfoValid);
   const wfsLayers = useSelector((state) => state.app.wfsLayers);
   const wcsLayers = useSelector((state) => state.app.wcsLayers);
   const isMobile = useSelector((state) => state.app.isMobile);
+  const dispatch = useDispatch();
+
 
   useEffect(() => {
-    collectInfoFromWMS(dispatch);
-    collectInfoFromWFS(dispatch);
-    collectInfoFromWCS(dispatch);
-    if (window.innerWidth <= 768) dispatch(setIsMobile())
-  }, []);
+    if (window.innerWidth <= 768) dispatch(setIsMobile());
+    load();
+  }, [])
 
-  if (wmsInfoValid) {
+  if (error === false && wmsInfoValid === true) {
     try {
       return (
         <div>
@@ -155,12 +180,15 @@ export default function App() {
               </p>
             </div>
           </div>
-          <Recommendations/>
+
+          <Dashboard />
+          <Recommendations />
+
         </div>
       );
     } catch (err) {
       console.log(err);
-      dispatch(reportInvalidWMS());
+      setError(true);
     }
   } else {
     return (

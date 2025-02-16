@@ -3,5 +3,6 @@ persistence-layer/*
 !persistence-layer/geocml-project.qgz
 !persistence-layer/portal-config.yaml
 !persistence-layer/DBBackups
+!persistence-layer/Fonts
 **/__pycache__/**
 .env

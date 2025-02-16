@@ -1,5 +1,5 @@
 ---
-- # Configure geocml-server
+-
   hosts: localhost
   connection: local
   gather_facts: yes
@@ -17,10 +17,6 @@
         state: present
         name: fcgid
         force: true
-    - name: Build geoCML Server Portal
-      ansible.builtin.command:
-        chdir: /portal/
-        cmd: npm run build
     - name: Add IPs to known host list
       shell: |
         sh -c "echo 'geocml-server geocml.server' >> /etc/hosts"``.
