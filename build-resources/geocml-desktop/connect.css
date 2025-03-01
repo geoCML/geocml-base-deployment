@@ -204,7 +204,7 @@ div.bg-image {
   margin: 0;
   top: 0;
   left: 0;
-  //background-image: url(../background.png);
+  background-image: url("https://images.geocml.com/");
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
