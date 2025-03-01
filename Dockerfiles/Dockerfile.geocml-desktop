@@ -16,7 +16,6 @@ RUN ./make.sh
 COPY ./build-resources/geocml-desktop/connect.html /usr/share/xpra/www/connect.html
 COPY ./build-resources/geocml-desktop/connect.css /usr/share/xpra/www/css/connect.css
 COPY ./build-resources/geocml-desktop/geocml-desktop-logo.png /usr/share/xpra/www/icons/geocml-desktop-logo.png
-COPY ./build-resources/geocml-desktop/html5-backgrounds/* /usr/share/xpra/www/
 
 ######### Customize Container Here ###########
 ######### End Customizations ###########
