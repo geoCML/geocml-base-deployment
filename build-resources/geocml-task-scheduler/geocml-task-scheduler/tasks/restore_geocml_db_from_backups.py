@@ -73,7 +73,11 @@ def restore_geocml_db_from_backups():
 
         if file_name_split[0] == "data":
             log("Found CSV data file {}".format(csv_data_file))
-            file_name_split = file_name_split[1].split(".")
+            file_name_split = file_name_split[1].split(".csv")
+            [schema, table] = [
+                file_name_split[0].split(".")[0],
+                file_name_split[0].split(".")[1]
+            ]
             csv_file_path = os.path.join(
                 db_backups_dir, most_recent_backup, csv_data_file
             )
@@ -87,9 +91,10 @@ def restore_geocml_db_from_backups():
             with open(csv_file_path, "r") as f:
                 # Skip the header line
                 next(f)
-                log("Loading data to: {}".format(file_name_split[1]))
+                log(f"Loading data to: {schema}.{table}")
+                cursor.execute(f'SET search_path TO {schema}')
                 cursor.copy_from(
-                    f, f"{file_name_split[1]}", sep=",", columns=columns, null="NULL"
+                    f, table, sep=",", columns=columns, null="NULL"
                 )
 
             log("Finished loading data!")
