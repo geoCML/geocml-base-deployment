@@ -1,7 +1,8 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { reportInvalidWMS } from "../app-slice";
 
 export function ContactInfo() {
+  const dispatch = useDispatch();
   const wmsInfo = useSelector((state) => state.app.wmsInfo);
 
   try {
@@ -43,6 +44,6 @@ export function ContactInfo() {
     );
   } catch (err) {
     console.log(err);
-    dispatchEvent(reportInvalidWMS());
+    dispatch(reportInvalidWMS());
   }
 }
