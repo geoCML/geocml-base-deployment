@@ -53,6 +53,7 @@ def backup_geocml_db():
     )
 
     if out.stderr:
+        conn.rollback()
         log("Failed to generate .tabor file {}".format(out.stderr))
         shutil.rmtree(path_to_backup_dir, ignore_errors=True)
         return
@@ -61,7 +62,7 @@ def backup_geocml_db():
     cursor.execute("""SELECT DISTINCT table_schema FROM information_schema.tables;""")
     schemas = cursor.fetchall()
 
-    # Write table data to CSV file
+    # Write backup tables
     for schema in schemas:
         if schema[0] in ignore_schemas:
             continue
@@ -76,20 +77,35 @@ def backup_geocml_db():
             if table[2] in ignore_tables:
                 continue
 
+            try:
+                cursor.execute(f"""SELECT * from {schema[0]}."{table[2]}", ST_MetaData(rast) as meta;""")
+                is_raster = True
+            except:
+                is_raster = False
+                conn.rollback()
+
             delete_backup_dir = False
 
-            data_file_path = os.path.join(
-                path_to_backup_dir, "data:{}.{}.csv".format(schema[0], table[2])
-            )
-            with open(data_file_path, "w") as data_file:
-                cursor.copy_expert(
-                    f"""COPY {schema[0]}."{table[2]}" TO STDOUT WITH (FORMAT csv, DELIMITER ',', HEADER, NULL 'NULL');""",
-                    data_file,
-                )
+            if is_raster:
+                if not os.path.exists(os.path.join(path_to_backup_dir, 'rasters')):
+                    os.mkdir(os.path.join(path_to_backup_dir, 'rasters'))
+
+                out = subprocess.run(f'gdal_translate -sds -of PNG PG:"host=geocml-postgres port=5432 user=postgres password={os.environ["GEOCML_POSTGRES_ADMIN_PASSWORD"]} dbname=geocml_db schema={schema[0]} table={table[2]}" {os.path.join(path_to_backup_dir, "rasters", table[2] + ".png")}', capture_output=True, shell=True)
+
+                if not os.path.exists(os.path.join(path_to_backup_dir, "rasters", f"{table[2]}_001.png")):
+                    log(f"Failed to backup raster layer: '{table[2]}', {out.stderr}")
+                    conn.rollback()
+                    shutil.rmtree(path_to_backup_dir, ignore_errors=True)
+                    return
+            else:
+                data_file_path = os.path.join(path_to_backup_dir, "data:{}.{}.csv".format(schema[0], table[2]))
+                with open(data_file_path, "w") as data_file:
+                    cursor.copy_expert(f"""COPY {schema[0]}."{table[2]}" TO STDOUT WITH (FORMAT csv, DELIMITER ',', HEADER, NULL 'NULL');""", data_file)
 
     if delete_backup_dir:  # nothing to back up
         log("Nothing to backup")
         os.rmdir(path_to_backup_dir)
 
+    conn.rollback()
     cursor.close()
     conn.close()

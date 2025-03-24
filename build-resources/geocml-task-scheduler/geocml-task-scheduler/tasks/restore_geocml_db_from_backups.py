@@ -99,6 +99,14 @@ def restore_geocml_db_from_backups():
 
             log("Finished loading data!")
 
+    # load raster data
+    os.environ["PGPASSWORD"] = os.environ["GEOCML_POSTGRES_ADMIN_PASSWORD"]
+    out = subprocess.run(f"raster2pgsql -I -C -M {os.path.join(most_recent_backup, 'rasters', '*.png')} -F public.raster_data | psql -U postgres -d geocml_db -h geocml-postgres -p 5432", capture_output=True, shell=True)
+    os.environ["PGPASSWORD"] = ""
+
+    if out.stderr:
+        log(f"Failed to load raster data: {out.stderr}")
+
     conn.commit()
 
     cursor.execute("SET session_replication_role = DEFAULT;")

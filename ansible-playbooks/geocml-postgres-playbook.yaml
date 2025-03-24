@@ -63,6 +63,11 @@
       community.postgresql.postgresql_set:
         name: listen_addresses
         value: "*"
+    - name: Set PSQL service port
+      become_user: postgres
+      community.postgresql.postgresql_set:
+        name: port
+        value: 5432
     - name: Add PostGIS extension to geocml_db
       become_user: postgres
       community.postgresql.postgresql_ext:
