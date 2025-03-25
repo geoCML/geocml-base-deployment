@@ -1,6 +1,6 @@
 ---
 services:
-  geocml-task-scheduler-dev:
+  geocml-task-scheduler:
     build:
       context: .
       dockerfile: ./Dockerfiles/Dockerfile.geocml-task-scheduler

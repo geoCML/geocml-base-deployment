@@ -3,6 +3,8 @@ import os
 import subprocess
 from time import time
 from task_logger import log
+import glob
+import re
 
 
 def restore_geocml_db_from_backups():
@@ -24,6 +26,9 @@ def restore_geocml_db_from_backups():
     most_recent_backup = ""
     for subdir in os.walk(db_backups_dir):
         try:
+            if "rasters" in subdir[0]:
+                continue
+
             subdir_timestamp = float(subdir[0].split("/")[-1])
             if now - subdir_timestamp < delta:
                 delta = now - subdir_timestamp
@@ -76,7 +81,7 @@ def restore_geocml_db_from_backups():
             file_name_split = file_name_split[1].split(".csv")
             [schema, table] = [
                 file_name_split[0].split(".")[0],
-                file_name_split[0].split(".")[1]
+                file_name_split[0].split(".")[1],
             ]
             csv_file_path = os.path.join(
                 db_backups_dir, most_recent_backup, csv_data_file
@@ -92,20 +97,46 @@ def restore_geocml_db_from_backups():
                 # Skip the header line
                 next(f)
                 log(f"Loading data to: {schema}.{table}")
-                cursor.execute(f'SET search_path TO {schema}')
-                cursor.copy_from(
-                    f, table, sep=",", columns=columns, null="NULL"
-                )
+                cursor.execute(f"SET search_path TO {schema}")
+                cursor.copy_from(f, table, sep=",", columns=columns, null="NULL")
 
             log("Finished loading data!")
 
     # load raster data
-    os.environ["PGPASSWORD"] = os.environ["GEOCML_POSTGRES_ADMIN_PASSWORD"]
-    out = subprocess.run(f"raster2pgsql -I -C -M {os.path.join(most_recent_backup, 'rasters', '*.png')} -F public.raster_data | psql -U postgres -d geocml_db -h geocml-postgres -p 5432", capture_output=True, shell=True)
-    os.environ["PGPASSWORD"] = ""
+    raster_files = glob.glob(os.path.join(most_recent_backup, "rasters", "*.png"))
+    if not raster_files:
+        log("No raster files found to restore")
+    else:
+        # Process each raster file
+        for raster_file in raster_files:
+            table_name = re.split("_\\d+", raster_file.split("/")[-1])[0]
+            cursor.execute(
+                f"""CREATE TABLE IF NOT EXISTS "{table_name}" (
+                    rast raster,
+                    filename TEXT
+                );"""
+            )
+            conn.commit()
 
-    if out.stderr:
-        log(f"Failed to load raster data: {out.stderr}")
+            raster2pgsql_cmd = [
+                "raster2pgsql",
+                "-I",  # Create spatial index
+                raster_file,
+                "-F",
+                "-a",
+                table_name,
+            ]
+            raster2pgsql_process = subprocess.Popen(
+                raster2pgsql_cmd, stdout=subprocess.PIPE
+            )
+            raster2pgsql_output = raster2pgsql_process.communicate()[0].decode()
+
+            if raster2pgsql_process.returncode != 0:
+                log(f"Failed to restore raster file: {raster_file}")
+                return
+
+            log(f"raster2pgsql_output: {raster2pgsql_output}")
+            cursor.execute(raster2pgsql_output)
 
     conn.commit()
 
