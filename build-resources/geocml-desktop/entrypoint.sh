@@ -10,6 +10,7 @@ cd ~/.local/share/QGIS/QGIS3/profiles/default/python/plugins
 qgis-plugin-manager init
 qgis-plugin-manager update
 qgis-plugin-manager install "QRestart"
+qgis-plugin-manager install "PostGIS Raster Import"
 
 cd ~
 mkdir ~/.fonts
