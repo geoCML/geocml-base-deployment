@@ -14,6 +14,7 @@ RUN chmod +x ./make.sh
 RUN ./make.sh
 
 COPY ./build-resources/geocml-desktop/connect.html /usr/share/xpra/www/connect.html
+COPY ./build-resources/geocml-desktop/index.html /usr/share/xpra/www/index.html
 COPY ./build-resources/geocml-desktop/connect.css /usr/share/xpra/www/css/connect.css
 COPY ./build-resources/geocml-desktop/geocml-desktop-logo.png /usr/share/xpra/www/icons/geocml-desktop-logo.png
 
