@@ -90,6 +90,51 @@ then
     fi
 fi
 
+if [ "$GEOCML_POSTGRES_PORT" == "" ]
+then
+    echo "\nPlease enter the port you want to use to access geoCML Postgres."
+    read GEOCML_POSTGRES_PORT
+    export GEOCML_POSTGRES_PORT=$GEOCML_POSTGRES_PORT
+    touch ~/.bashrc &> /dev/null
+    if grep -q GEOCML_POSTGRES_PORT ~/.bashrc; then
+        echo "[INFO] Updating GEOCML_POSTGRES_PORT in your bash profile."
+        sed -i '' 's/export GEOCML_POSTGRES_PORT=.*/export GEOCML_POSTGRES_PORT='$GEOCML_POSTGRES_PORT'/' ~/.bashrc
+    else
+        echo "[INFO] Adding this to your bash profile for future use."
+        echo "export GEOCML_POSTGRES_PORT=$GEOCML_POSTGRES_PORT" >> ~/.bashrc
+    fi
+fi
+
+if [ "$GEOCML_DESKTOP_PORT" == "" ]
+then
+    echo "\nPlease enter the port you want to use to access geoCML Desktop."
+    read GEOCML_DESKTOP_PORT
+    export GEOCML_DESKTOP_PORT=$GEOCML_DESKTOP_PORT
+    touch ~/.bashrc &> /dev/null
+    if grep -q GEOCML_DESKTOP_PORT ~/.bashrc; then
+        echo "[INFO] Updating GEOCML_DESKTOP_PORT in your bash profile."
+        sed -i '' 's/export GEOCML_DESKTOP_PORT=.*/export GEOCML_DESKTOP_PORT='$GEOCML_DESKTOP_PORT'/' ~/.bashrc
+    else
+        echo "[INFO] Adding this to your bash profile for future use."
+        echo "export GEOCML_DESKTOP_PORT=$GEOCML_DESKTOP_PORT" >> ~/.bashrc
+    fi
+fi
+
+if [ "$GEOCML_SERVER_PORT" == "" ]
+then
+    echo "\nPlease enter the port you want to use to access geoCML Server."
+    read GEOCML_SERVER_PORT
+    export GEOCML_SERVER_PORT=$GEOCML_SERVER_PORT
+    touch ~/.bashrc &> /dev/null
+    if grep -q GEOCML_SERVER_PORT ~/.bashrc; then
+        echo "[INFO] Updating GEOCML_SERVER_PORT in your bash profile."
+        sed -i '' 's/export GEOCML_SERVER_PORT=.*/export GEOCML_SERVER_PORT='$GEOCML_SERVER_PORT'/' ~/.bashrc
+    else
+        echo "[INFO] Adding this to your bash profile for future use."
+        echo "export GEOCML_SERVER_PORT=$GEOCML_SERVER_PORT" >> ~/.bashrc
+    fi
+fi
+
 if [ "$GEOCML_INSTALLATION_METHOD" == "" ]
 then
     echo "\nPlease select how you want to install geoCML to this machine."
