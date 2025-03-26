@@ -135,6 +135,22 @@ then
     fi
 fi
 
+if [ "$GEOCML_NETWORK_NAME" == "" ]
+then
+    echo "\nPlease enter the name you want to use for the geoCML network."
+    read GEOCML_NETWORK_NAME
+    export GEOCML_NETWORK_NAME=$GEOCML_NETWORK_NAME
+    touch ~/.bashrc &> /dev/null
+    if grep -q GEOCML_NETWORK_NAME ~/.bashrc; then
+        echo "[INFO] Updating GEOCML_NETWORK_NAME in your bash profile."
+        sed -i '' 's/export GEOCML_NETWORK_NAME=.*/export GEOCML_NETWORK_NAME='$GEOCML_NETWORK_NAME'/' ~/.bashrc
+    else
+        echo "[INFO] Adding this to your bash profile for future use."
+        echo "export GEOCML_NETWORK_NAME=$GEOCML_NETWORK_NAME" >> ~/.bashrc
+    fi
+fi
+
+
 if [ "$GEOCML_INSTALLATION_METHOD" == "" ]
 then
     echo "\nPlease select how you want to install geoCML to this machine."
@@ -207,11 +223,9 @@ fi
 
 echo "[INFO]: Check /tmp/logs/geocml/build.log for additional information about your build!"
 
-rm -rf /tmp/geocml/geocml-base-deployment/ &> /tmp/geocml/logs/build.log
-
 echo "[INFO] Starting geoCML..."
 
-docker network create geocml-network &> /tmp/geocml/logs/start.log
+docker network create $GEOCML_NETWORK_NAME &> /tmp/geocml/logs/start.log
 docker compose down &> /tmp/geocml/logs/start.log
 docker compose up -d --wait &> /tmp/geocml/logs/start.log
 kill $spinner_pid
