@@ -91,4 +91,5 @@ services:
 networks:
   geocml-network:
     external: true
+    name: ${GEOCML_NETWORK_NAME}
     driver: bridge
