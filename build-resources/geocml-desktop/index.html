@@ -101,6 +101,7 @@
 									<li><a href="#" data-icon="info" onclick="show_about(event); return false">About Xpra</a></li>
 									<li><a href="#" data-icon="trending_up" onclick="show_sessioninfo(event); return false">Session Info</a></li>
 									<li><a href="#" data-icon="bug_report" onclick="show_bugreport(event); return false">Bug Report</a></li>
+                                    <li><a href="#" id="fullscreen_button" title="Fullscreen" data-icon="fullscreen">Toggle Fullscreen</a></li>
 								</ul>
 							</li>
 							<li><a href="#" data-icon="exit_to_app" onclick="client.disconnect_reason='User request'; client.close(); return false">Disconnect</a></li>
@@ -112,12 +113,14 @@
 						</ul>
 					</li>
                     <li class="-hasSubmenu -noChevron">
+						<a href="#" title="Open geoCML Server Portal" data-icon="router" onclick="window.open(window.location.protocol + '//' + window.location.hostname.split('.').slice(-2).join('.'), '_blank');"></a>
+						<ul id="open_geocml_server_portal">
+						</ul>
+					</li>
+                    <li class="-hasSubmenu -noChevron">
 						<a href="#" title="Open Windows" data-icon="filter"></a>
 						<ul id="open_windows_list">
 						</ul>
-					</li>
-					<li class="-hasSubmenu -noChevron">
-						<a href="#" id="fullscreen_button" title="Fullscreen" data-icon="fullscreen"></a>
 					</li>
 					<li class="-hasSubmenu -noChevron">
 						<a href="#" id="sound_button" title="Audio" data-icon="volume_off"></a>
