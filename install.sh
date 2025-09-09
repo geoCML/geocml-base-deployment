@@ -1,3 +1,5 @@
+#!/bin/bash
+
 VERSION=v4.0
 DOCKER_COMPOSE_PATH=$(dirname $(find $(pwd) -name "docker-compose.yml"))
 
@@ -30,7 +32,7 @@ echo "Welcome to geoCML $VERSION!"
 
 if [ "$GEOCML_DEPLOYMENT_NAME" == "" ]
 then
-    echo "\nPlease enter the name you want to use to for this deployment."
+    printf "\nPlease enter the name you want to use to for this deployment.\n"
     echo "(This will create a folder for your geoCML deployment at $HOME)"
     read GEOCML_DEPLOYMENT_NAME
     export GEOCML_DEPLOYMENT_NAME=$GEOCML_DEPLOYMENT_NAME
@@ -47,7 +49,7 @@ fi
 
 if [ "$GEOCML_DESKTOP_PASSWORD" == "" ]
 then
-    echo "\nPlease enter the password you want to use to access geoCML Desktop."
+    printf "\nPlease enter the password you want to use to access geoCML Desktop.\n"
     read GEOCML_DESKTOP_PASSWORD
     export GEOCML_DESKTOP_PASSWORD=$GEOCML_DESKTOP_PASSWORD
     touch ~/.bashrc &> /dev/null
@@ -62,7 +64,7 @@ fi
 
 if [ "$GEOCML_POSTGRES_ADMIN_PASSWORD" == "" ]
 then
-    echo "\nPlease enter the administrator password you want to use to access geoCML Postgres."
+    printf "\nPlease enter the administrator password you want to use to access geoCML Postgres.\n"
     read GEOCML_POSTGRES_ADMIN_PASSWORD
     export GEOCML_POSTGRES_ADMIN_PASSWORD=$GEOCML_POSTGRES_ADMIN_PASSWORD
     touch ~/.bashrc &> /dev/null
@@ -77,7 +79,7 @@ fi
 
 if [ "$GEOCML_POSTGRES_PASSWORD" == "" ]
 then
-    echo "\nPlease enter the password you want to use to access geoCML Postgres with user 'geocml'."
+    printf "\nPlease enter the password you want to use to access geoCML Postgres with user 'geocml'.\n"
     read GEOCML_POSTGRES_PASSWORD
     export GEOCML_POSTGRES_PASSWORD=$GEOCML_POSTGRES_PASSWORD
     touch ~/.bashrc &> /dev/null
@@ -92,7 +94,7 @@ fi
 
 if [ "$GEOCML_POSTGRES_PORT" == "" ]
 then
-    echo "\nPlease enter the port you want to use to access geoCML Postgres."
+    printf "\nPlease enter the port you want to use to access geoCML Postgres.\n"
     read GEOCML_POSTGRES_PORT
     export GEOCML_POSTGRES_PORT=$GEOCML_POSTGRES_PORT
     touch ~/.bashrc &> /dev/null
@@ -107,7 +109,7 @@ fi
 
 if [ "$GEOCML_DESKTOP_PORT" == "" ]
 then
-    echo "\nPlease enter the port you want to use to access geoCML Desktop."
+    printf "\nPlease enter the port you want to use to access geoCML Desktop.\n"
     read GEOCML_DESKTOP_PORT
     export GEOCML_DESKTOP_PORT=$GEOCML_DESKTOP_PORT
     touch ~/.bashrc &> /dev/null
@@ -122,7 +124,7 @@ fi
 
 if [ "$GEOCML_SERVER_PORT" == "" ]
 then
-    echo "\nPlease enter the port you want to use to access geoCML Server."
+    printf "\nPlease enter the port you want to use to access geoCML Server.\n"
     read GEOCML_SERVER_PORT
     export GEOCML_SERVER_PORT=$GEOCML_SERVER_PORT
     touch ~/.bashrc &> /dev/null
@@ -137,7 +139,7 @@ fi
 
 if [ "$GEOCML_NETWORK_NAME" == "" ]
 then
-    echo "\nPlease enter the name you want to use for the geoCML network."
+    printf "\nPlease enter the name you want to use for the geoCML network.\n"
     read GEOCML_NETWORK_NAME
     export GEOCML_NETWORK_NAME=$GEOCML_NETWORK_NAME
     touch ~/.bashrc &> /dev/null
@@ -153,7 +155,7 @@ fi
 
 if [ "$GEOCML_INSTALLATION_METHOD" == "" ]
 then
-    echo "\nPlease select how you want to install geoCML to this machine."
+    printf "\nPlease select how you want to install geoCML to this machine.\n"
     echo "1) Pull Docker image from GHCR (recommended)"
     echo "2) Build Docker image locally from source"
     read GEOCML_INSTALLATION_METHOD
@@ -163,7 +165,7 @@ fi
 mkdir ~/$GEOCML_DEPLOYMENT_NAME &> /dev/null
 if [ $? -ne 0 ]
 then
-    echo "\n[ERROR]: ~/$GEOCML_DEPLOYMENT_NAME is not empty."
+    printf "\n[ERROR]: ~/$GEOCML_DEPLOYMENT_NAME is not empty.\n"
     echo "Can I delete the directory at $HOME/$GEOCML_DEPLOYMENT_NAME?"
     echo "(yes/no)"
     read RM_PROJECT_DIR
@@ -184,8 +186,8 @@ mkdir /tmp/geocml/logs &> /dev/null
 
 if [ "$DOCKER_COMPOSE_PATH" == "" ]
 then
-    echo "\n[WARN]: It looks like this install script was run outside of the geoCML Base Deployment repository..."
-    echo "\n[INFO]: Cloning into /tmp/geocml-base-deployment."
+    printf "\n[WARN]: It looks like this install script was run outside of the geoCML Base Deployment repository...\n"
+    printf "\n[INFO]: Cloning into /tmp/geocml-base-deployment.\n"
     git clone https://github.com/geoCML/geocml-base-deployment.git /tmp/geocml/geocml-base-deployment/ &> /tmp/geocml/logs/build.log
     cd /tmp/geocml/geocml-base-deployment/ &> /tmp/geocml/logs/build.log
     git fetch --tags --all &> /tmp/geocml/logs/build.log
@@ -199,21 +201,21 @@ cd ~/$GEOCML_DEPLOYMENT_NAME/ &> /tmp/geocml/logs/build.log
 if [ "$GEOCML_INSTALLATION_METHOD" == "1" ]
 then
     echo "Okay, geoCML will be installed by pulling the Docker image from GHCR."
-    echo "\n[INFO]: Pulling geoCML..."
+    printf "\n[INFO]: Pulling geoCML...\n"
 
     spinner &
     spinner_pid=$!
     docker compose pull &> /tmp/geocml/logs/build.log
-    echo "\n[INFO]: Finished pulling containers from GHCR."
+    printf "\n[INFO]: Finished pulling containers from GHCR.\n"
 elif [ "$GEOCML_INSTALLATION_METHOD" == "2" ]
 then
     echo "Okay, geoCML will be installed by building the containers locally from source."
-    echo "\n[INFO]: Building geoCML..."
+    printf "\n[INFO]: Building geoCML...\n"
 
     spinner &
     spinner_pid=$!
     docker compose build &> /tmp/geocml/logs/build.log
-    echo "\n[INFO]: Finished building."
+    printf "\n[INFO]: Finished building.\n"
 else
     echo "No idea what $GEOCML_INSTALLATION_METHOD means! Please provide a valid installation method (1, 2). Exiting."
     kill $spinner_pid
@@ -230,6 +232,6 @@ docker compose down &> /tmp/geocml/logs/start.log
 docker compose up -d --wait &> /tmp/geocml/logs/start.log
 kill $spinner_pid
 wait $spinner_pid 2>/dev/null
-echo "\n[INFO]: Finished startup."
+printf "\n[INFO]: Finished startup.\n"
 echo "[INFO]: Check /tmp/logs/geocml/start.log for additional information about your deployment!"
 exit 0
